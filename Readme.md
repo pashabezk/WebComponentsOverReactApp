@@ -1,7 +1,3 @@
-# Template
-This repository is template for different projects.
+# WebComponentsOverReactApp
 
-Contains:
-* readme file;
-* editor config file;
-* gitignore file
+An application with experiment on replacing part of the React components with web components

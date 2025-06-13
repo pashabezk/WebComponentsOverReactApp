@@ -1,0 +1,42 @@
+/* user-card:defined {
+	outline: solid green 1px;
+} */
+
+/* user-card:not(:defined) {
+	display: none;
+} */
+
+user-card:not(:defined)::before {
+	outline: solid red 1px;
+	content: 'Error on loading user card';
+}
+
+.user-card {
+	border: 1px solid dimgray;
+	border-radius: 5px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px;
+	width: fit-content;
+}
+
+.user-info {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.user-name {
+	font-weight: bold;
+	margin: 0;
+	padding: 0;
+}
+
+.user-image {
+	aspect-ratio: 1;
+	width: 60px;
+	height: 60px;
+	object-fit: cover;
+	border-radius: 50%;
+}
