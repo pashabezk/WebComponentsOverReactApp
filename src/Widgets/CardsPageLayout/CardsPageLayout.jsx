@@ -1,4 +1,3 @@
-import "react";
 import {NavLink} from "react-router-dom";
 import {RouterPath} from "../../Shared/Constants/RouterConstants.js";
 import styles from "./CardsPageLayout.module.css";

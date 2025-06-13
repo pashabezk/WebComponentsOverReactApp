@@ -1,3 +1,7 @@
+export const UserCardEvent = {
+	subscribe: "subscribe",
+};
+
 export class UserCardEditable extends HTMLElement {
 	#name = "";
 	#surname = "";
@@ -71,7 +75,7 @@ export class UserCardEditable extends HTMLElement {
 
 	onSubscribe() {
 		const details = {name: this.#name, surname: this.#surname};
-		this.dispatchEvent(new CustomEvent("subscribe", {detail: details}));
+		this.dispatchEvent(new CustomEvent(UserCardEvent.subscribe, {detail: details}));
 	}
 
 	#updateNameParagraph() {
