@@ -1,8 +1,8 @@
-import {useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 import {experimentSetupManager} from "../../Features/ExperimentSetupManager/ExperimentSetupManager.js";
 import {UserCardHandlers} from "../../Features/UserCardHandlers/UserCardHandlers.js";
 import avatar from "../../Shared/Assets/UserCircle.svg?no-inline";
-import {usersData} from "../../Shared/MockData/UsersData.js";
+import {getMockUsers} from "../../Shared/MockData/UsersData.js";
 import CardsPageLayout from "../../Widgets/CardsPageLayout/CardsPageLayout.jsx";
 import {UserCardEvent} from "./UserCard.js";
 
@@ -12,7 +12,8 @@ const handleSubscribe = (event) => {
 };
 
 const ExperimentWCPage = () => {
-	const users = new Array(experimentSetupManager.getCardsCount()).fill(0);
+	const [users, setUsers] = useState(getMockUsers(experimentSetupManager.getCardsCount()));
+	const startTimeRef = useRef(null);
 	const userCardRefs = useRef([]);
 
 	useEffect(() => {
@@ -29,14 +30,31 @@ const ExperimentWCPage = () => {
 		};
 	}, []);
 
+	useEffect(() => {
+		if (startTimeRef.current !== null) {
+			const endTime = performance.now();
+
+			const duration = endTime - startTimeRef.current;
+			console.log(`Время выполнения операции удаления и обновления интерфейса: ${duration} миллисекунд`);
+
+			startTimeRef.current = null;
+		}
+	}, [users]);
+
+	const deleteUser = () => {
+		const deleteIndex = 0;
+		startTimeRef.current = performance.now();
+		setUsers(users.toSpliced(deleteIndex, 1));
+	};
+
 	return (
-		<CardsPageLayout>
-			{users.map((item, index) => (
+		<CardsPageLayout itemsCount={users.length} onDelete={deleteUser}>
+			{users.map((user, index) => (
 				<user-card
-					key={usersData[index].id}
+					key={user.id}
 					ref={(el) => (userCardRefs.current[index] = el)}
-					name={usersData[index].name}
-					surname={usersData[index].surname}
+					name={user.name}
+					surname={user.surname}
 					img-src={avatar}
 				></user-card>
 			))}

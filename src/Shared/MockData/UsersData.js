@@ -1,4 +1,4 @@
-export const usersData = [
+const usersData = [
 	{id: 1, name: "Иван", surname: "Иванов"},
 	{id: 2, name: "Мария", surname: "Петрова"},
 	{id: 3, name: "Алексей", surname: "Сидоров"},
@@ -100,3 +100,12 @@ export const usersData = [
 	{id: 99, name: "Назар", surname: "Туров"},
 	{id: 100, name: "Амелия", surname: "Дементьева"}
 ];
+
+export const getMockUsers = (count = usersData.length) => {
+	const length = usersData.length;
+	const result = [];
+	for (let i = 0; i < count; i++) {
+		result.push({...structuredClone(usersData[i % length]), id: i});
+	}
+	return result;
+};

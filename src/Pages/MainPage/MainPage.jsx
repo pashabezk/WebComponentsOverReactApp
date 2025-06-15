@@ -7,7 +7,7 @@ const MainPage = () => {
 		<div className={styles.wrapper}>
 			<h1>Main page</h1>
 			<p><NavLink to={RouterPath.React}>Page with React components</NavLink></p>
-			<p><NavLink to={RouterPath.WebComponents}>Page with web components</NavLink></p>
+			<p><NavLink to={RouterPath.WebComponents}>Page with Web Components</NavLink></p>
 		</div>
 	);
 };
