@@ -13,7 +13,6 @@ const handleSubscribe = (event) => {
 
 const ExperimentWCPage = () => {
 	const [users, setUsers] = useState(getMockUsers(experimentSetupManager.getCardsCount()));
-	const startTimeRef = useRef(null);
 	const userCardRefs = useRef([]);
 
 	useEffect(() => {
@@ -30,25 +29,8 @@ const ExperimentWCPage = () => {
 		};
 	}, []);
 
-	useEffect(() => {
-		if (startTimeRef.current !== null) {
-			const endTime = performance.now();
-
-			const duration = endTime - startTimeRef.current;
-			console.log(`Время выполнения операции удаления и обновления интерфейса: ${duration} миллисекунд`);
-
-			startTimeRef.current = null;
-		}
-	}, [users]);
-
-	const deleteUser = () => {
-		const deleteIndex = 0;
-		startTimeRef.current = performance.now();
-		setUsers(users.toSpliced(deleteIndex, 1));
-	};
-
 	return (
-		<CardsPageLayout itemsCount={users.length} onDelete={deleteUser}>
+		<CardsPageLayout cardsData={users} setCardsData={setUsers}>
 			{users.map((user, index) => (
 				<user-card
 					key={user.id}
