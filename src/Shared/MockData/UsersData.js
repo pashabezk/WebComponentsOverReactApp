@@ -1,3 +1,12 @@
+/**
+ * @typedef MockUser
+ * @type {{surname: string, name: string, id: number}}
+ */
+
+/**
+ * Array of mock users
+ * @type {MockUser[]}
+ */
 const usersData = [
 	{id: 1, name: "Иван", surname: "Иванов"},
 	{id: 2, name: "Мария", surname: "Петрова"},
@@ -101,15 +110,33 @@ const usersData = [
 	{id: 100, name: "Амелия", surname: "Дементьева"}
 ];
 
-export const getMockUsers = (count = usersData.length) => {
+/**
+ * Function to get users
+ * @param count {number} how many users to return
+ * @param props extra properties
+ * @param props.startId {number} allow to set id from which users will be generated
+ * @return {MockUser[]}
+ */
+export const getMockUsers = (count = usersData.length, {startId = 0} = {}) => {
 	const length = usersData.length;
+	const amountOfUsers = count + startId;
 	const result = [];
-	for (let i = 0; i < count; i++) {
+	for (let i = startId; i < amountOfUsers; i++) {
 		result.push({...structuredClone(usersData[i % length]), id: i});
 	}
 	return result;
 };
 
-export const getRandomUser = () => {
-	return structuredClone(usersData[Math.floor(Math.random() * usersData.length)]);
+/**
+ * Function to random get user
+ * @param props extra properties
+ * @param props.withId {MockUser.id} allow to override id for user
+ * @return {MockUser}
+ */
+export const getRandomUser = ({withId} = {}) => {
+	const user = structuredClone(usersData[Math.floor(Math.random() * usersData.length)]);
+	if (withId) {
+		user.id = withId;
+	}
+	return user;
 };
