@@ -109,3 +109,7 @@ export const getMockUsers = (count = usersData.length) => {
 	}
 	return result;
 };
+
+export const getRandomUser = () => {
+	return structuredClone(usersData[Math.floor(Math.random() * usersData.length)]);
+};
