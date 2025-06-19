@@ -14,11 +14,11 @@ export const generateRandom = (max) => {
  * @return {T[]}
  */
 export const swapRandomElements = (arr) => {
-	if (arr.length <= 1) {
-		return arr;
-	}
-
 	const array = [...arr];
+
+	if (arr.length <= 1) {
+		return array;
+	}
 
 	const index1 = generateRandom(array.length);
 	let index2 = generateRandom(array.length);

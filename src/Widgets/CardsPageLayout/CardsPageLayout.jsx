@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 import {NavLink} from "react-router-dom";
 import {RouterPath} from "../../Shared/Constants/RouterConstants.js";
-import {getRandomUser} from "../../Shared/MockData/UsersData.js";
+import {getMockUsers, getRandomUser} from "../../Shared/MockData/UsersData.js";
 import {swapRandomElements} from "../../Shared/Utils/CommonUtils.js";
 import styles from "./CardsPageLayout.module.css";
 import "../../Widgets/UserCard/UserCard.css";
@@ -11,8 +11,10 @@ import "../../Widgets/UserCard/UserCard.css";
  */
 
 const operations = {
-	delete: "delete",
 	insert: "insert",
+	insert1000: "insert1000",
+	delete: "delete",
+	deleteAll: "deleteAll",
 	swap: "swap",
 };
 
@@ -29,7 +31,7 @@ const CardsPageLayout = ({cardsData, setCardsData, children}) => {
 	const operationRef = useRef(null);
 
 	/** Stores last card item id. Needed to prevent duplicated id */
-	const lastId = useRef(cardsData[cardsData.length - 1].id);
+	const lastId = useRef(cardsData[cardsData.length - 1]?.id ?? 0);
 
 	/** @type {[LastOperation, React.Dispatch<LastOperation>]} */
 	const [lastOperation, setLastOperation] = useState({operation: null, duration: null});
@@ -51,12 +53,26 @@ const CardsPageLayout = ({cardsData, setCardsData, children}) => {
 		setCardsData(cardsData.toSpliced(deleteIndex, 1));
 	};
 
+	const deleteAll = () => {
+		startTimeRef.current = performance.now();
+		operationRef.current = operations.deleteAll;
+		setCardsData([]);
+	};
+
 	const addItem = () => {
 		startTimeRef.current = performance.now();
 		operationRef.current = operations.insert;
 		const newId = lastId.current + 1;
 		lastId.current = newId;
 		setCardsData([...cardsData, getRandomUser({withId: newId})]);
+	};
+
+	const addSeveralItems = (count = 1000) => {
+		startTimeRef.current = performance.now();
+		operationRef.current = operations.insert1000;
+		const newData = getMockUsers(count, {startId: lastId.current + 1});
+		lastId.current = newData[newData.length - 1].id;
+		setCardsData([...cardsData, ...newData]);
 	};
 
 	const swapRandomItems = () => {
@@ -81,9 +97,13 @@ const CardsPageLayout = ({cardsData, setCardsData, children}) => {
 							: <>null</>
 					}
 				</p>
-				<button onClick={addItem}>Insert</button>
-				<button onClick={deleteItem}>Delete</button>
-				<button onClick={swapRandomItems}>Swap</button>
+				<div className={styles.buttonBar}>
+					<button onClick={addItem}>Insert</button>
+					<button onClick={() => addSeveralItems(1000)}>Insert 1000</button>
+					<button onClick={deleteItem}>Delete</button>
+					<button onClick={deleteAll}>Delete all</button>
+					<button onClick={swapRandomItems}>Swap</button>
+				</div>
 			</div>
 			<div className={styles.cardsContainer}>
 				{children}
