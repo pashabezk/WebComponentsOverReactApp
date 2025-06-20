@@ -7,7 +7,7 @@ import {toFullDateTime} from "../Utils/DateUtils.js";
  *
  * @example
  * // create report object
- * const report = new Report();
+ * const report = new ExperimentReport();
  *
  * // optionally: override start time
  * report.start();
@@ -22,7 +22,7 @@ import {toFullDateTime} from "../Utils/DateUtils.js";
  * // output results to console
  * console.log(report.create());
  */
-export class Report {
+export class ExperimentReport {
 	#startTime;
 	#endTime;
 

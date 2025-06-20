@@ -18,11 +18,8 @@ export const URL = {
 /** How many times should one test be executed */
 export const TEST_REPEAT_COUNT = 2;
 
+/** Array with experiments which will be tested */
+export const EXPERIMENTS_TO_TEST = [EXPERIMENTS.REACT, EXPERIMENTS.WEB_COMPONENTS];
+
 /** Array with operations which will be tested */
 export const OPERATIONS_TO_TEST = [OPERATIONS.insert, OPERATIONS.delete, OPERATIONS.swap];
-
-/** Flag is responsible the need of running react experiment or not */
-export const EXECUTE_REACT_EXPERIMENT = true;
-
-/** Flag is responsible the need of running web components experiment or not */
-export const EXECUTE_WEB_COMPONENTS_EXPERIMENT = true;

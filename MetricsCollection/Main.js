@@ -1,6 +1,5 @@
-import {EXECUTE_REACT_EXPERIMENT, EXECUTE_WEB_COMPONENTS_EXPERIMENT, OPERATIONS_TO_TEST, TEST_REPEAT_COUNT} from "./Config.js";
-import {EXPERIMENTS} from "./Constants.js";
-import {Report} from "./Entities/Report.js";
+import {EXPERIMENTS_TO_TEST, OPERATIONS_TO_TEST, TEST_REPEAT_COUNT} from "./Config.js";
+import {ExperimentReport} from "./Entities/ExperimentReport.js";
 import {executeTest} from "./TestLogic/ExecuteTest.js";
 import {Logger} from "./Utils/Logger.js";
 import {saveReport} from "./Utils/SaveReport.js";
@@ -9,7 +8,7 @@ import {saveReport} from "./Utils/SaveReport.js";
  * Run pack operations for experiment and write results to report object
  * @param experiment {string} experiment name @see {EXPERIMENTS}
  * @param operations {string[]} operations for which tests should run @see {OPERATIONS}
- * @param report {Report} report instance, that will be supplemented with new data
+ * @param report {ExperimentReport} report instance, that will be supplemented with new data
  * @return {Promise<void>}
  */
 const runExperiment = async (experiment, operations, report) => {
@@ -23,17 +22,14 @@ const runExperiment = async (experiment, operations, report) => {
 };
 
 const runAllTests = async () => {
-	const report = new Report();
+	const report = new ExperimentReport();
 
-	if (EXECUTE_REACT_EXPERIMENT) {
-		await runExperiment(EXPERIMENTS.REACT, OPERATIONS_TO_TEST, report);
-	}
-	if (EXECUTE_WEB_COMPONENTS_EXPERIMENT) {
-		await runExperiment(EXPERIMENTS.WEB_COMPONENTS, OPERATIONS_TO_TEST, report);
+	for (const experiment of EXPERIMENTS_TO_TEST) {
+		await runExperiment(experiment, OPERATIONS_TO_TEST, report);
 	}
 
 	report.finish();
-	await saveReport(report);
+	await saveReport(report.create());
 };
 
 runAllTests().then(() => {
