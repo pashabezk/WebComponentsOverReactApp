@@ -16,10 +16,17 @@ export const URL = {
 };
 
 /** How many times should one test be executed */
-export const TEST_REPEAT_COUNT = 2;
+export const TEST_REPEAT_COUNT = 3;
 
 /** Array with experiments which will be tested */
 export const EXPERIMENTS_TO_TEST = [EXPERIMENTS.REACT, EXPERIMENTS.WEB_COMPONENTS];
 
 /** Array with operations which will be tested */
 export const OPERATIONS_TO_TEST = [OPERATIONS.insert, OPERATIONS.delete, OPERATIONS.swap];
+
+/**
+ * Flag to run browser in headless mode.
+ * If true browser will be hidden.
+ * If false browser will be visible during test execution
+ */
+export const BROWSER_HEADLESS = true;
