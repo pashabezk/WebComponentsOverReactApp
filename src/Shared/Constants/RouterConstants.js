@@ -1,5 +1,5 @@
 export const RouterPath = {
 	Main: "/",
-	React: "react",
+	React: "/react",
 	WebComponents: "/web-components",
-}
+};

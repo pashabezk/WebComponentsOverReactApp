@@ -1,10 +1,11 @@
+import "../../Widgets/UserCard/UserCard.css";
 import {useEffect, useRef, useState} from "react";
 import {NavLink} from "react-router-dom";
 import {RouterPath} from "../../Shared/Constants/RouterConstants.js";
 import {getMockUsers, getRandomUser} from "../../Shared/MockData/UsersData.js";
 import {swapRandomElements} from "../../Shared/Utils/CommonUtils.js";
 import styles from "./CardsPageLayout.module.css";
-import "../../Widgets/UserCard/UserCard.css";
+import {BUTTON_ID, DATA_TEST_ID} from "./Constants.js";
 
 /**
  * @typedef {{operation?: string, duration?: number}} LastOperation
@@ -91,18 +92,18 @@ const CardsPageLayout = ({cardsData, setCardsData, children}) => {
 					{
 						lastOperation.operation
 							? <>
-								<span data-test-id="last-operaion">{lastOperation.operation}</span>{" "}
-								(<span data-test-id="last-operaion-duration">{lastOperation.duration.toFixed(3)}</span> ms)
+								<span data-test-id={DATA_TEST_ID.lastOperation}>{lastOperation.operation}</span>{" "}
+								(<span data-test-id={DATA_TEST_ID.lastOperationDuration}>{lastOperation.duration.toFixed(3)}</span> ms)
 							</>
 							: <>null</>
 					}
 				</p>
 				<div className={styles.buttonBar}>
-					<button onClick={addItem}>Insert</button>
-					<button onClick={() => addSeveralItems(1000)}>Insert 1000</button>
-					<button onClick={deleteItem}>Delete</button>
-					<button onClick={deleteAll}>Delete all</button>
-					<button onClick={swapRandomItems}>Swap</button>
+					<button id={BUTTON_ID.insert} onClick={addItem}>Insert</button>
+					<button id={BUTTON_ID.insert1000} onClick={() => addSeveralItems(1000)}>Insert 1000</button>
+					<button id={BUTTON_ID.delete} onClick={deleteItem}>Delete</button>
+					<button id={BUTTON_ID.deleteAll} onClick={deleteAll}>Delete all</button>
+					<button id={BUTTON_ID.swap} onClick={swapRandomItems}>Swap</button>
 				</div>
 			</div>
 			<div className={styles.cardsContainer}>
