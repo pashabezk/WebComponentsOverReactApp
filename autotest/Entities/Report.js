@@ -1,4 +1,5 @@
 import {TEST_REPEAT_COUNT} from "../Config.js";
+import {EXPERIMENTS} from "../Constants.js";
 import {toFullDateTime} from "../Utils/DateUtils.js";
 
 /**
@@ -12,9 +13,8 @@ import {toFullDateTime} from "../Utils/DateUtils.js";
  * report.start();
  *
  * // add results
- * report.react.delete.addResult(12);
- * report.webComponents.insert.addResult(12);
- * report.webComponents.insert.addResult(12);
+ * report.addResult(EXPERIMENTS.REACT, OPERATIONS.insert, 12);
+ * report.addResult(EXPERIMENTS.WEB_COMPONENTS, OPERATIONS.insert, 10);
  *
  * // write end time
  * report.finish();
@@ -26,29 +26,8 @@ export class Report {
 	#startTime;
 	#endTime;
 
-	#webComponentsResults = {
-		insertOperations: [],
-		deleteOperations: [],
-		swapOperations: [],
-	};
-
-	#reactResults = {
-		insertOperations: [],
-		deleteOperations: [],
-		swapOperations: [],
-	};
-
-	webComponents = {
-		insert: {addResult: (result) => {this.#webComponentsResults.insertOperations.push(result);}},
-		delete: {addResult: (result) => {this.#webComponentsResults.deleteOperations.push(result);}},
-		swap: {addResult: (result) => {this.#webComponentsResults.swapOperations.push(result);}},
-	};
-
-	react = {
-		insert: {addResult: (result) => {this.#reactResults.insertOperations.push(result);}},
-		delete: {addResult: (result) => {this.#reactResults.deleteOperations.push(result);}},
-		swap: {addResult: (result) => {this.#reactResults.swapOperations.push(result);}},
-	};
+	#webComponentsResults = {};
+	#reactResults = {};
 
 	constructor() {
 		this.start();
@@ -62,6 +41,28 @@ export class Report {
 	/** Method to write experiment end time */
 	finish(endTime = new Date()) {
 		this.#endTime = endTime;
+	}
+
+	/**
+	 * Method to add experiment operation result
+	 * @param experiment {string} experiment name @see {EXPERIMENTS}
+	 * @param operation {string} operation name @see {OPERATIONS}
+	 * @param duration {number} operation duration in ms
+	 */
+	addResult(experiment, operation, duration) {
+		if (experiment === EXPERIMENTS.REACT) {
+			if (this.#reactResults[operation]) {
+				this.#reactResults[operation].push(duration);
+			} else {
+				this.#reactResults[operation] = [duration];
+			}
+		} else if (experiment === EXPERIMENTS.WEB_COMPONENTS) {
+			if (this.#webComponentsResults[operation]) {
+				this.#webComponentsResults[operation].push(duration);
+			} else {
+				this.#webComponentsResults[operation] = [duration];
+			}
+		}
 	}
 
 	/** Creates report result object */

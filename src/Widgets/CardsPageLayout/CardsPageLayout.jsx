@@ -5,19 +5,11 @@ import {RouterPath} from "../../Shared/Constants/RouterConstants.js";
 import {getMockUsers, getRandomUser} from "../../Shared/MockData/UsersData.js";
 import {swapRandomElements} from "../../Shared/Utils/CommonUtils.js";
 import styles from "./CardsPageLayout.module.css";
-import {BUTTON_ID, DATA_TEST_ID} from "./Constants.js";
+import {BUTTON_ID, DATA_TEST_ID, OPERATIONS} from "./Constants.js";
 
 /**
  * @typedef {{operation?: string, duration?: number}} LastOperation
  */
-
-const operations = {
-	insert: "insert",
-	insert1000: "insert1000",
-	delete: "delete",
-	deleteAll: "deleteAll",
-	swap: "swap",
-};
 
 /**
  * Component that encapsulates logic to work with elements
@@ -50,19 +42,19 @@ const CardsPageLayout = ({cardsData, setCardsData, children}) => {
 	const deleteItem = () => {
 		const deleteIndex = 0;
 		startTimeRef.current = performance.now();
-		operationRef.current = operations.delete;
+		operationRef.current = OPERATIONS.delete;
 		setCardsData(cardsData.toSpliced(deleteIndex, 1));
 	};
 
 	const deleteAll = () => {
 		startTimeRef.current = performance.now();
-		operationRef.current = operations.deleteAll;
+		operationRef.current = OPERATIONS.deleteAll;
 		setCardsData([]);
 	};
 
 	const addItem = () => {
 		startTimeRef.current = performance.now();
-		operationRef.current = operations.insert;
+		operationRef.current = OPERATIONS.insert;
 		const newId = lastId.current + 1;
 		lastId.current = newId;
 		setCardsData([...cardsData, getRandomUser({withId: newId})]);
@@ -70,7 +62,7 @@ const CardsPageLayout = ({cardsData, setCardsData, children}) => {
 
 	const addSeveralItems = (count = 1000) => {
 		startTimeRef.current = performance.now();
-		operationRef.current = operations.insert1000;
+		operationRef.current = OPERATIONS.insert1000;
 		const newData = getMockUsers(count, {startId: lastId.current + 1});
 		lastId.current = newData[newData.length - 1].id;
 		setCardsData([...cardsData, ...newData]);
@@ -78,7 +70,7 @@ const CardsPageLayout = ({cardsData, setCardsData, children}) => {
 
 	const swapRandomItems = () => {
 		startTimeRef.current = performance.now();
-		operationRef.current = operations.swap;
+		operationRef.current = OPERATIONS.swap;
 		setCardsData(swapRandomElements(cardsData));
 	};
 
@@ -99,11 +91,11 @@ const CardsPageLayout = ({cardsData, setCardsData, children}) => {
 					}
 				</p>
 				<div className={styles.buttonBar}>
-					<button id={BUTTON_ID.insert} onClick={addItem}>Insert</button>
-					<button id={BUTTON_ID.insert1000} onClick={() => addSeveralItems(1000)}>Insert 1000</button>
-					<button id={BUTTON_ID.delete} onClick={deleteItem}>Delete</button>
-					<button id={BUTTON_ID.deleteAll} onClick={deleteAll}>Delete all</button>
-					<button id={BUTTON_ID.swap} onClick={swapRandomItems}>Swap</button>
+					<button id={BUTTON_ID[OPERATIONS.insert]} onClick={addItem}>Insert</button>
+					<button id={BUTTON_ID[OPERATIONS.insert1000]} onClick={() => addSeveralItems(1000)}>Insert 1000</button>
+					<button id={BUTTON_ID[OPERATIONS.delete]} onClick={deleteItem}>Delete</button>
+					<button id={BUTTON_ID[OPERATIONS.deleteAll]} onClick={deleteAll}>Delete all</button>
+					<button id={BUTTON_ID[OPERATIONS.swap]} onClick={swapRandomItems}>Swap</button>
 				</div>
 			</div>
 			<div className={styles.cardsContainer}>

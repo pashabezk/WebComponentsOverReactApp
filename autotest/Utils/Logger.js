@@ -4,7 +4,7 @@ const ERROR = "\nERROR:";
 /** Class helper that stores all messages to log */
 export class Logger {
 	static log = {
-		operationComplete: (operation, durationInMs) => console.log(LOG, `Operation "${operation}" finished in ${durationInMs}ms`),
+		operationComplete: (experiment, operation, durationInMs) => console.log(LOG, `${experiment}: operation "${operation}" finished in ${durationInMs}ms`),
 	};
 
 	static success = {

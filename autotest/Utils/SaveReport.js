@@ -1,7 +1,7 @@
 import fs from "fs";
 import {writeFile} from "fs/promises";
 import path from "path";
-import {REPORTS_DIR} from "../Config.js";
+import {REPORTS_DIR} from "../Constants.js";
 import {toSortOrderedDatetime} from "./DateUtils.js";
 import {Logger} from "./Logger.js";
 
@@ -29,7 +29,8 @@ export const saveReport = async (reportObject) => {
 	try {
 		await writeFile(reportFilePath, reportStr);
 		Logger.success.reportSaved(reportFilePath);
-	} catch {
+	} catch (error) {
 		Logger.error.fileWrite(reportFilePath);
+		throw error;
 	}
 };
