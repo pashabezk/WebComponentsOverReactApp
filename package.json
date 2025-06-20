@@ -9,7 +9,7 @@
 		"build": "vite build",
 		"lint": "eslint .",
 		"preview": "vite preview",
-		"collect-metrics": "node autotest/Main.js"
+		"collect-metrics": "node MetricsCollection/Main.js"
 	},
 	"dependencies": {
 		"react": "^19.0.0",

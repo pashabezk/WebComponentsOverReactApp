@@ -3,7 +3,7 @@ import {BUTTON_ID, DATA_TEST_ID} from "../src/Widgets/CardsPageLayout/Constants.
 import {selectorById, selectorByTestId} from "./Utils/SelectorUtils.js";
 
 /** Directory where stored experiment reports */
-export const REPORTS_DIR = path.join("autotest", "Reports");
+export const REPORTS_DIR = path.join("MetricsCollection", "Reports");
 
 /** Collection of experiments */
 export const EXPERIMENTS = {
