@@ -18,6 +18,9 @@ export const URL = {
 /** How many times should one test be executed */
 export const TEST_REPEAT_COUNT = 3;
 
+/** How many elements should be rendered on page during experiment */
+export const ELEMENTS_ON_PAGE = 1000;
+
 /** Array with experiments which will be tested */
 export const EXPERIMENTS_TO_TEST = [EXPERIMENTS.REACT, EXPERIMENTS.WEB_COMPONENTS];
 
@@ -29,4 +32,4 @@ export const OPERATIONS_TO_TEST = [OPERATIONS.insert, OPERATIONS.delete, OPERATI
  * If true browser will be hidden.
  * If false browser will be visible during test execution
  */
-export const BROWSER_HEADLESS = true;
+export const BROWSER_HEADLESS = false;

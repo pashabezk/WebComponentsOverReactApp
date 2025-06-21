@@ -1,4 +1,4 @@
-import {TEST_REPEAT_COUNT} from "../Config.js";
+import {ELEMENTS_ON_PAGE, TEST_REPEAT_COUNT} from "../Config.js";
 import {EXPERIMENTS} from "../Constants.js";
 import {toFullDateTime} from "../Utils/DateUtils.js";
 
@@ -73,6 +73,7 @@ export class ExperimentReport {
 				endTime: toFullDateTime(this.#endTime),
 				totalDurationInMs: this.#endTime - this.#startTime,
 				testsRepeatedCount: TEST_REPEAT_COUNT,
+				amountOfElements: ELEMENTS_ON_PAGE,
 			},
 			results: {
 				react: this.#reactResults,

@@ -76,7 +76,7 @@ const CardsPageLayout = ({cardsData, setCardsData, children}) => {
 
 	return (
 		<div className={styles.pageLayout}>
-			<NavLink to={RouterPath.Main}>На главную</NavLink>
+			<NavLink to={RouterPath.Main}>Go to main page</NavLink>
 			<div>
 				<p>Rendered items: {cardsData.length}</p>
 				<p>

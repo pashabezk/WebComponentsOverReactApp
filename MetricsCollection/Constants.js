@@ -1,4 +1,5 @@
 import path from "path";
+import {DATA_TEST_ID as MAIN_PAGE_IDS} from "../src/Pages/MainPage/Constants.js";
 import {BUTTON_ID, DATA_TEST_ID} from "../src/Widgets/CardsPageLayout/Constants.js";
 import {selectorById, selectorByTestId} from "./Utils/SelectorUtils.js";
 
@@ -20,4 +21,9 @@ export const SELECTOR = {
 	swapBtn: selectorById(BUTTON_ID.swap),
 
 	resultTime: selectorByTestId(DATA_TEST_ID.lastOperationDuration),
+
+	linkToReactPage: selectorByTestId(MAIN_PAGE_IDS.linkToReactPage),
+	linkToWcPage: selectorByTestId(MAIN_PAGE_IDS.linkToWcPage),
+
+	elementsAmountInput: selectorByTestId(MAIN_PAGE_IDS.elementsAmountInput),
 };

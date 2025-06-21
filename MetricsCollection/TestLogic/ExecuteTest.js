@@ -1,6 +1,6 @@
 import {BUTTON_ID} from "../../src/Widgets/CardsPageLayout/Constants.js";
-import {URL} from "../Config.js";
-import {SELECTOR} from "../Constants.js";
+import {ELEMENTS_ON_PAGE, URL} from "../Config.js";
+import {EXPERIMENTS, SELECTOR} from "../Constants.js";
 import {selectorById} from "../Utils/SelectorUtils.js";
 
 /**
@@ -20,9 +20,20 @@ import {selectorById} from "../Utils/SelectorUtils.js";
  */
 export const executeTest = async (browser, experiment, operation) => {
 	const page = await browser.newPage();
-	await page.goto(URL[experiment]);
+	await page.goto(URL.MAIN);
 
-	await page.click(selectorById(BUTTON_ID[operation]));
+	// set amount of elements
+	const input = await page.waitForSelector(SELECTOR.elementsAmountInput);
+	await input.evaluate((elem) => { elem.value = ""; });
+	await page.type(SELECTOR.elementsAmountInput, ELEMENTS_ON_PAGE.toString());
+
+	// go to experiment page
+	await page.click(experiment === EXPERIMENTS.REACT ? SELECTOR.linkToReactPage : SELECTOR.linkToWcPage);
+	const buttonSelector = selectorById(BUTTON_ID[operation]);
+	await page.waitForSelector(buttonSelector);
+
+	// click on button with operation
+	await page.click(buttonSelector);
 
 	const resultTimeElem = await page.waitForSelector(SELECTOR.resultTime);
 	const durationStr = await page.evaluate(el => el.textContent, resultTimeElem);
