@@ -1,8 +1,16 @@
+/** Collection of UserCard element attribute names */
+export const UserCardAttribute = {
+	name: "name",
+	surname: "surname",
+	imgSrc: "img-src",
+};
+
+/** Collection of UserCard event names */
 export const UserCardEvent = {
 	subscribe: "subscribe",
 };
 
-export class UserCardEditable extends HTMLElement {
+export class UserCard extends HTMLElement {
 	#name = "";
 	#surname = "";
 	#imgSrc = "";
@@ -11,23 +19,41 @@ export class UserCardEditable extends HTMLElement {
 	#nameParagraph;
 	#userImage;
 
-	/** Устанавливает отслеживание изменения атрибутов */
+	/** Sets attribute change tracking */
 	static get observedAttributes() {
-		return ["name", "surname", "img-src"];
+		return [UserCardAttribute.name, UserCardAttribute.surname, UserCardAttribute.imgSrc];
 	}
 
-	/** Вызывается при добавлении компонента в DOM */
+	/** Called when an element is added to the DOM */
 	connectedCallback() {
-		this.#name = this.getAttribute("name") || "";
-		this.#surname = this.getAttribute("surname") || "";
-		this.#imgSrc = this.getAttribute("img-src") || "assets/profile-user.png";
+		this.#name = this.getAttribute(UserCardAttribute.name) || "";
+		this.#surname = this.getAttribute(UserCardAttribute.surname) || "";
+		this.#imgSrc = this.getAttribute(UserCardAttribute.imgSrc) || "";
 
-		this.render();
-		this.#subscribeButton.addEventListener("click", () => this.onSubscribe());
+		this.#render();
+		this.#subscribeButton.addEventListener("click", () => this.#onSubscribe());
 	}
 
-	render() {
-		// Создаём элементы
+	/** Called when one of the attributes specified in observedAttributes changes */
+	attributeChangedCallback(attrName, oldValue, newValue) {
+		switch (attrName) {
+			case UserCardAttribute.name:
+				this.#name = newValue;
+				this.#updateNameParagraph();
+				break;
+			case UserCardAttribute.surname:
+				this.#surname = newValue;
+				this.#updateNameParagraph();
+				break;
+			case UserCardAttribute.imgSrc:
+				this.#imgSrc = newValue;
+				this.#updateImageSrc();
+				break;
+		}
+	}
+
+	#render() {
+		// create elements
 		const userCardDiv = document.createElement("div");
 		userCardDiv.classList.add("user-card");
 
@@ -47,35 +73,12 @@ export class UserCardEditable extends HTMLElement {
 		this.#subscribeButton.textContent = "Подписаться";
 		this.#subscribeButton.classList.add("action-button");
 
-		// Добавляем элементы в DOM
+		// add elements to DOM
 		this.appendChild(userCardDiv);
 		userCardDiv.appendChild(this.#userImage);
 		userCardDiv.appendChild(userInfoDiv);
 		userInfoDiv.appendChild(this.#nameParagraph);
 		userInfoDiv.appendChild(this.#subscribeButton);
-	}
-
-	/** Вызывается при изменении одного из аттрибутов, указанных в observedAttributes */
-	attributeChangedCallback(attrName, oldValue, newValue) {
-		switch (attrName) {
-			case "name":
-				this.#name = newValue;
-				this.#updateNameParagraph();
-				break;
-			case "surname":
-				this.#surname = newValue;
-				this.#updateNameParagraph();
-				break;
-			case "imgSrc":
-				this.#imgSrc = newValue;
-				this.#updateImageSrc();
-				break;
-		}
-	}
-
-	onSubscribe() {
-		const details = {name: this.#name, surname: this.#surname};
-		this.dispatchEvent(new CustomEvent(UserCardEvent.subscribe, {detail: details}));
 	}
 
 	#updateNameParagraph() {
@@ -88,5 +91,10 @@ export class UserCardEditable extends HTMLElement {
 		if (this.#userImage) {
 			this.#userImage.src = this.#imgSrc;
 		}
+	}
+
+	#onSubscribe() {
+		const details = {name: this.#name, surname: this.#surname};
+		this.dispatchEvent(new CustomEvent(UserCardEvent.subscribe, {detail: details}));
 	}
 }

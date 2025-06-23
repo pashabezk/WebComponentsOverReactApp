@@ -11,4 +11,3 @@ const UserCard = ({name, surname, imgSrc, onSubscribe}) => {
 };
 
 export default UserCard;
-

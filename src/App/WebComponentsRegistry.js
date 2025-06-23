@@ -1,7 +1,7 @@
-import {UserCardEditable} from "../Pages/ExperimentWC/UserCard.js";
+import {UserCard} from "../Pages/ExperimentWC/UserCard.js";
 
 const componentsToDefine = [
-	{tag: "user-card", class: UserCardEditable},
+	{tag: "user-card", class: UserCard},
 ];
 
 /** Function that register user custom elements used in project */

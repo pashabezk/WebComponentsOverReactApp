@@ -1,16 +1,3 @@
-/* user-card:defined {
-	outline: solid green 1px;
-} */
-
-/* user-card:not(:defined) {
-	display: none;
-} */
-
-user-card:not(:defined)::before {
-	outline: solid red 1px;
-	content: 'Error on loading user card';
-}
-
 .user-card {
 	border: 1px solid dimgray;
 	border-radius: 5px;

@@ -27,7 +27,7 @@ const ExperimentWCPage = () => {
 				userCardElement?.removeEventListener(UserCardEvent.subscribe, handleSubscribe);
 			});
 		};
-	}, []);
+	}, [users]);
 
 	return (
 		<CardsPageLayout cardsData={users} setCardsData={setUsers}>
