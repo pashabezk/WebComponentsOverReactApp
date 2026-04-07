@@ -5,6 +5,8 @@ export const OPERATIONS = {
 	delete: "delete",
 	deleteAll: "deleteAll",
 	swap: "swap",
+	replaceAll: "replaceAll",
+	partialUpdate: "partialUpdate",
 };
 
 export const DATA_TEST_ID = {
@@ -18,4 +20,6 @@ export const BUTTON_ID = {
 	[OPERATIONS.delete]: "btn-delete",
 	[OPERATIONS.deleteAll]: "btn-deleteAll",
 	[OPERATIONS.swap]: "btn-swap",
+	[OPERATIONS.replaceAll]: "btn-replaceAll",
+	[OPERATIONS.partialUpdate]: "btn-partialUpdate",
 };

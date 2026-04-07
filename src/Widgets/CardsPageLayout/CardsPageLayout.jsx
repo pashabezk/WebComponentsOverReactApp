@@ -68,6 +68,25 @@ const CardsPageLayout = ({cardsData, setCardsData, children}) => {
 		setCardsData([...cardsData, ...newData]);
 	};
 
+	const replaceItems = () => {
+		startTimeRef.current = performance.now();
+		operationRef.current = OPERATIONS.replaceAll;
+		const newData = getMockUsers(cardsData.length, {startId: lastId.current + 1});
+		lastId.current = newData[newData.length - 1]?.id ?? 0;
+		setCardsData(newData);
+	};
+
+	const partialUpdate = () => {
+		startTimeRef.current = performance.now();
+		operationRef.current = OPERATIONS.partialUpdate;
+		let newId = lastId.current;
+		const newData = Array.from(cardsData, (elem, i) => (
+			i % 10 === 0 ? getRandomUser({withId: ++newId}) : elem
+		));
+		lastId.current = newId;
+		setCardsData(newData);
+	};
+
 	const swapRandomItems = () => {
 		startTimeRef.current = performance.now();
 		operationRef.current = OPERATIONS.swap;
@@ -87,7 +106,7 @@ const CardsPageLayout = ({cardsData, setCardsData, children}) => {
 								<span data-test-id={DATA_TEST_ID.lastOperation}>{lastOperation.operation}</span>{" "}
 								(<span data-test-id={DATA_TEST_ID.lastOperationDuration}>{lastOperation.duration.toFixed(3)}</span> ms)
 							</>
-							: <>null</>
+							: "null"
 					}
 				</p>
 				<div className={styles.buttonBar}>
@@ -96,6 +115,8 @@ const CardsPageLayout = ({cardsData, setCardsData, children}) => {
 					<button id={BUTTON_ID[OPERATIONS.delete]} onClick={deleteItem}>Delete</button>
 					<button id={BUTTON_ID[OPERATIONS.deleteAll]} onClick={deleteAll}>Delete all</button>
 					<button id={BUTTON_ID[OPERATIONS.swap]} onClick={swapRandomItems}>Swap</button>
+					<button id={BUTTON_ID[OPERATIONS.replaceAll]} onClick={replaceItems}>Replace all</button>
+					<button id={BUTTON_ID[OPERATIONS.partialUpdate]} onClick={partialUpdate}>Partial update</button>
 				</div>
 			</div>
 			<div className={styles.cardsContainer}>
