@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from "react";
-import {experimentSetupManager} from "../../Features/ExperimentSetupManager/ExperimentSetupManager.js";
+import {useExperimentSetup} from "../../Features/ExperimentSetupManager/UseExperimentSetup.js";
 import {UserCardHandlers} from "../../Features/UserCardHandlers/UserCardHandlers.js";
 import avatar from "../../Shared/Assets/UserCircle.svg?no-inline";
 import {getMockUsers} from "../../Shared/MockData/UsersData.js";
@@ -12,7 +12,8 @@ const handleSubscribe = (event) => {
 };
 
 const ExperimentWCPage = () => {
-	const [users, setUsers] = useState(getMockUsers(experimentSetupManager.getCardsCount()));
+	const {cardsCount} = useExperimentSetup();
+	const [users, setUsers] = useState(getMockUsers(cardsCount));
 	const userCardRefs = useRef([]);
 
 	useEffect(() => {
