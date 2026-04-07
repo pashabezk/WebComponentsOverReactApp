@@ -12,9 +12,10 @@ const generateReportFilename = () => {
 /**
  * Function to save report into file
  * @param objectToSave {object} object that will be stringified and written to file
+ * @param filename {string?} output filename
  * @return {Promise<void>}
  */
-export const saveReport = async (objectToSave) => {
+export const saveReport = async (objectToSave, filename) => {
 	try {
 		if (!fs.existsSync(REPORTS_DIR)) {
 			fs.mkdirSync(REPORTS_DIR);
@@ -24,7 +25,7 @@ export const saveReport = async (objectToSave) => {
 		throw error;
 	}
 
-	const reportFilePath = path.join(REPORTS_DIR, generateReportFilename());
+	const reportFilePath = path.join(REPORTS_DIR, filename ?? generateReportFilename());
 	const reportStr = JSON.stringify(objectToSave, null, "\t");
 	try {
 		await writeFile(reportFilePath, reportStr);
