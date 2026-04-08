@@ -3,7 +3,7 @@ import {useEffect, useRef, useState} from "react";
 import {NavLink} from "react-router-dom";
 import {RouterPath} from "../../Shared/Constants/RouterConstants.js";
 import {getMockUsers, getRandomUser} from "../../Shared/MockData/UsersData.js";
-import {swapRandomElements} from "../../Shared/Utils/CommonUtils.js";
+import {generateRandom, swapRandomElements} from "../../Shared/Utils/CommonUtils.js";
 import styles from "./CardsPageLayout.module.css";
 import {BUTTON_ID, DATA_TEST_ID, OPERATIONS} from "./Constants.js";
 
@@ -16,10 +16,12 @@ import {BUTTON_ID, DATA_TEST_ID, OPERATIONS} from "./Constants.js";
  * @param props component properties
  * @param props.cardsData {MockUser[]} data
  * @param props.setCardsData {React.Dispatch<MockUser[]>} callback to set data
+ * @param props.selectedId {number} selected item id
+ * @param props.setSelectedId {React.Dispatch<number>} callback to index for selected item
  * @param props.children {React.ReactNode} react children
  * @return {JSX.Element}
  */
-const CardsPageLayout = ({cardsData, setCardsData, children}) => {
+const CardsPageLayout = ({cardsData, setCardsData, selectedId, setSelectedId, children}) => {
 	const startTimeRef = useRef(null);
 	const operationRef = useRef(null);
 
@@ -37,7 +39,7 @@ const CardsPageLayout = ({cardsData, setCardsData, children}) => {
 			startTimeRef.current = null;
 			operationRef.current = null;
 		}
-	}, [cardsData]);
+	}, [cardsData, selectedId]);
 
 	const deleteItem = () => {
 		const deleteIndex = 0;
@@ -66,6 +68,29 @@ const CardsPageLayout = ({cardsData, setCardsData, children}) => {
 		const newData = getMockUsers(count, {startId: lastId.current + 1});
 		lastId.current = newData[newData.length - 1].id;
 		setCardsData([...cardsData, ...newData]);
+	};
+
+	const selectItem = () => {
+		startTimeRef.current = performance.now();
+		operationRef.current = OPERATIONS.select;
+
+		if (cardsData.length === 0) {
+			setCardsData([]);
+			return;
+		}
+		if (cardsData.length === 1) {
+			setSelectedId(selectedId ? null : cardsData[0].id);
+			return;
+		}
+
+		let i = generateRandom(cardsData.length);
+		const newSelectedId = cardsData[i].id;
+
+		// check to prevent select already selected element
+		if (newSelectedId === selectedId) {
+			i = i === (cardsData.length - 1) ? i - 1 : i + 1;
+		}
+		setSelectedId(cardsData[i].id);
 	};
 
 	const replaceItems = () => {
@@ -114,6 +139,7 @@ const CardsPageLayout = ({cardsData, setCardsData, children}) => {
 					<button id={BUTTON_ID[OPERATIONS.insert1000]} onClick={() => addSeveralItems(1000)}>Insert 1000</button>
 					<button id={BUTTON_ID[OPERATIONS.delete]} onClick={deleteItem}>Delete</button>
 					<button id={BUTTON_ID[OPERATIONS.deleteAll]} onClick={deleteAll}>Delete all</button>
+					<button id={BUTTON_ID[OPERATIONS.select]} onClick={selectItem}>Select</button>
 					<button id={BUTTON_ID[OPERATIONS.swap]} onClick={swapRandomItems}>Swap</button>
 					<button id={BUTTON_ID[OPERATIONS.replaceAll]} onClick={replaceItems}>Replace all</button>
 					<button id={BUTTON_ID[OPERATIONS.partialUpdate]} onClick={partialUpdate}>Partial update</button>

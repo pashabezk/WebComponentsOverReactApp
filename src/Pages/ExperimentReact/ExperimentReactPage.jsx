@@ -10,14 +10,22 @@ const ExperimentReactPage = () => {
 	const {cardsCount} = useExperimentSetup();
 	const [users, setUsers] = useState(getMockUsers(cardsCount));
 
+	const [selectedId, setSelectedId] = useState(null);
+
 	return (
-		<CardsPageLayout cardsData={users} setCardsData={setUsers}>
+		<CardsPageLayout
+			cardsData={users}
+			setCardsData={setUsers}
+			selectedId={selectedId}
+			setSelectedId={setSelectedId}
+		>
 			{users.map((user) => (
 				<UserCard
 					key={user.id}
 					name={user.name}
 					surname={user.surname}
 					imgSrc={avatar}
+					isSelected={selectedId === user.id}
 					onSubscribe={UserCardHandlers.handleSubscribe}
 				/>
 			))}

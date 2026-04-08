@@ -3,6 +3,7 @@ export const UserCardAttribute = {
 	name: "name",
 	surname: "surname",
 	imgSrc: "img-src",
+	selected: "selected",
 };
 
 /** Collection of UserCard event names */
@@ -14,14 +15,16 @@ export class UserCard extends HTMLElement {
 	#name = "";
 	#surname = "";
 	#imgSrc = "";
+	#isSelected = false;
 
+	#userCardDiv;
 	#subscribeButton;
 	#nameParagraph;
 	#userImage;
 
 	/** Sets attribute change tracking */
 	static get observedAttributes() {
-		return [UserCardAttribute.name, UserCardAttribute.surname, UserCardAttribute.imgSrc];
+		return [UserCardAttribute.name, UserCardAttribute.surname, UserCardAttribute.imgSrc, UserCardAttribute.selected];
 	}
 
 	/** Called when an element is added to the DOM */
@@ -29,6 +32,7 @@ export class UserCard extends HTMLElement {
 		this.#name = this.getAttribute(UserCardAttribute.name) || "";
 		this.#surname = this.getAttribute(UserCardAttribute.surname) || "";
 		this.#imgSrc = this.getAttribute(UserCardAttribute.imgSrc) || "";
+		this.#isSelected = this.hasAttribute(UserCardAttribute.selected);
 
 		this.#render();
 		this.#subscribeButton.addEventListener("click", () => this.#onSubscribe());
@@ -49,13 +53,18 @@ export class UserCard extends HTMLElement {
 				this.#imgSrc = newValue;
 				this.#updateImageSrc();
 				break;
+			case UserCardAttribute.selected:
+				this.#isSelected = this.hasAttribute(UserCardAttribute.selected);
+				this.#updateSelection();
+				break;
 		}
 	}
 
 	#render() {
 		// create elements
-		const userCardDiv = document.createElement("div");
-		userCardDiv.classList.add("user-card");
+		this.#userCardDiv = document.createElement("div");
+		this.#userCardDiv.classList.add("user-card");
+		this.#updateSelection();
 
 		this.#userImage = document.createElement("img");
 		this.#userImage.classList.add("user-image");
@@ -74,9 +83,9 @@ export class UserCard extends HTMLElement {
 		this.#subscribeButton.classList.add("action-button");
 
 		// add elements to DOM
-		this.appendChild(userCardDiv);
-		userCardDiv.appendChild(this.#userImage);
-		userCardDiv.appendChild(userInfoDiv);
+		this.appendChild(this.#userCardDiv);
+		this.#userCardDiv.appendChild(this.#userImage);
+		this.#userCardDiv.appendChild(userInfoDiv);
 		userInfoDiv.appendChild(this.#nameParagraph);
 		userInfoDiv.appendChild(this.#subscribeButton);
 	}
@@ -90,6 +99,14 @@ export class UserCard extends HTMLElement {
 	#updateImageSrc() {
 		if (this.#userImage) {
 			this.#userImage.src = this.#imgSrc;
+		}
+	}
+
+	#updateSelection() {
+		if (this.#isSelected) {
+			this.#userCardDiv.classList.add("selected");
+		} else {
+			this.#userCardDiv.classList.remove("selected");
 		}
 	}
 

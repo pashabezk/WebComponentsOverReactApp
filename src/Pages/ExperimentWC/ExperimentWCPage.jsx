@@ -16,6 +16,8 @@ const ExperimentWCPage = () => {
 	const [users, setUsers] = useState(getMockUsers(cardsCount));
 	const userCardRefs = useRef([]);
 
+	const [selectedId, setSelectedId] = useState(null);
+
 	useEffect(() => {
 		const cards = [...userCardRefs.current];
 
@@ -31,7 +33,12 @@ const ExperimentWCPage = () => {
 	}, [users]);
 
 	return (
-		<CardsPageLayout cardsData={users} setCardsData={setUsers}>
+		<CardsPageLayout
+			cardsData={users}
+			setCardsData={setUsers}
+			selectedId={selectedId}
+			setSelectedId={setSelectedId}
+		>
 			{users.map((user, index) => (
 				<user-card
 					key={user.id}
@@ -39,6 +46,7 @@ const ExperimentWCPage = () => {
 					name={user.name}
 					surname={user.surname}
 					img-src={avatar}
+					selected={selectedId === user.id}
 				></user-card>
 			))}
 		</CardsPageLayout>

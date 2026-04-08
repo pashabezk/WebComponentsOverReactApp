@@ -8,6 +8,10 @@
 	width: fit-content;
 }
 
+.selected {
+	outline: 3px solid blue;
+}
+
 .user-info {
 	display: flex;
 	flex-direction: column;
