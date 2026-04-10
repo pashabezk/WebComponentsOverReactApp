@@ -25,7 +25,16 @@ export const ELEMENTS_ON_PAGE = 10000;
 export const EXPERIMENTS_TO_TEST = [EXPERIMENTS.REACT, EXPERIMENTS.WEB_COMPONENTS];
 
 /** Array with operations which will be tested */
-export const OPERATIONS_TO_TEST = [OPERATIONS.insert, OPERATIONS.delete, OPERATIONS.swap, OPERATIONS.insert1000];
+export const OPERATIONS_TO_TEST = [
+	OPERATIONS.insert,
+	OPERATIONS.insert1000,
+	OPERATIONS.delete,
+	OPERATIONS.deleteAll,
+	OPERATIONS.select,
+	OPERATIONS.swap,
+	OPERATIONS.replaceAll,
+	OPERATIONS.partialUpdate,
+];
 
 /**
  * Flag to run browser in headless mode.

@@ -1,3 +1,4 @@
+import {SearchQueryParams} from "../../src/Shared/Constants/SearchQueryConstants.js";
 import {BUTTON_ID} from "../../src/Widgets/CardsPageLayout/Constants.js";
 import {ELEMENTS_ON_PAGE, URL} from "../Config.js";
 import {EXPERIMENTS, SELECTOR} from "../Constants.js";
@@ -19,20 +20,15 @@ import {selectorById} from "../Utils/SelectorUtils.js";
  * await executeTest(EXPERIMENTS.REACT, OPERATIONS.insert);
  */
 export const executeTest = async (browser, experiment, operation) => {
+	const url = (experiment === EXPERIMENTS.REACT ? URL[EXPERIMENTS.REACT] : URL[EXPERIMENTS.WEB_COMPONENTS])
+		+ `?${SearchQueryParams.InitialCardsCount}=${ELEMENTS_ON_PAGE}`;
+
 	const page = await browser.newPage();
-	await page.goto(URL.MAIN);
-
-	// set amount of elements
-	const input = await page.waitForSelector(SELECTOR.elementsAmountInput);
-	await input.evaluate((elem) => { elem.value = ""; });
-	await page.type(SELECTOR.elementsAmountInput, ELEMENTS_ON_PAGE.toString());
-
-	// go to experiment page
-	await page.click(experiment === EXPERIMENTS.REACT ? SELECTOR.linkToReactPage : SELECTOR.linkToWcPage);
-	const buttonSelector = selectorById(BUTTON_ID[operation]);
-	await page.waitForSelector(buttonSelector);
+	await page.goto(url);
 
 	// click on button with operation
+	const buttonSelector = selectorById(BUTTON_ID[operation]);
+	await page.waitForSelector(buttonSelector);
 	await page.click(buttonSelector);
 
 	const resultTimeElem = await page.waitForSelector(SELECTOR.resultTime);

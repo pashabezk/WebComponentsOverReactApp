@@ -10,7 +10,8 @@
 		"build": "vite build",
 		"lint": "eslint .",
 		"preview": "vite preview",
-		"collect-metrics": "node MetricsCollection/Main.js"
+		"collect-metrics": "node MetricsCollection/Main.js",
+		"analyse-report": "node ReportAnalysis/Main.js"
 	},
 	"dependencies": {
 		"react": "^19.0.0",
