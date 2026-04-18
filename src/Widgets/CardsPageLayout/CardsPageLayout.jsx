@@ -62,9 +62,9 @@ const CardsPageLayout = ({cardsData, setCardsData, selectedId, setSelectedId, ch
 		setCardsData([...cardsData, getRandomUser({withId: newId})]);
 	};
 
-	const addSeveralItems = (count = 1000) => {
+	const addSeveralItems = (count = 1000, operation = OPERATIONS.insert1000) => {
 		startTimeRef.current = performance.now();
-		operationRef.current = OPERATIONS.insert1000;
+		operationRef.current = operation;
 		const newData = getMockUsers(count, {startId: lastId.current + 1});
 		lastId.current = newData[newData.length - 1].id;
 		setCardsData([...cardsData, ...newData]);
@@ -136,7 +136,8 @@ const CardsPageLayout = ({cardsData, setCardsData, selectedId, setSelectedId, ch
 				</p>
 				<div className={styles.buttonBar}>
 					<button id={BUTTON_ID[OPERATIONS.insert]} onClick={addItem}>Insert</button>
-					<button id={BUTTON_ID[OPERATIONS.insert1000]} onClick={() => addSeveralItems(1000)}>Insert 1000</button>
+					<button id={BUTTON_ID[OPERATIONS.insert1000]} onClick={() => addSeveralItems(1000, OPERATIONS.insert1000)}>Insert 1000</button>
+					<button id={BUTTON_ID[OPERATIONS.insert10_000]} onClick={() => addSeveralItems(10000, OPERATIONS.insert10_000)}>Insert 10&nbsp;000</button>
 					<button id={BUTTON_ID[OPERATIONS.delete]} onClick={deleteItem}>Delete</button>
 					<button id={BUTTON_ID[OPERATIONS.deleteAll]} onClick={deleteAll}>Delete all</button>
 					<button id={BUTTON_ID[OPERATIONS.select]} onClick={selectItem}>Select</button>

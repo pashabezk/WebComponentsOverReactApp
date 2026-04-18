@@ -2,6 +2,7 @@
 export const OPERATIONS = {
 	insert: "insert",
 	insert1000: "insert1000",
+	insert10_000: "insert10_000",
 	delete: "delete",
 	deleteAll: "deleteAll",
 	select: "select",
@@ -18,6 +19,7 @@ export const DATA_TEST_ID = {
 export const BUTTON_ID = {
 	[OPERATIONS.insert]: "btn-insert",
 	[OPERATIONS.insert1000]: "btn-insert1000",
+	[OPERATIONS.insert10_000]: "btn-insert10_000",
 	[OPERATIONS.delete]: "btn-delete",
 	[OPERATIONS.deleteAll]: "btn-deleteAll",
 	[OPERATIONS.select]: "btn-select",
