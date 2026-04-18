@@ -1,6 +1,5 @@
 import {RouterPath} from "../src/Shared/Constants/RouterConstants.js";
-import {OPERATIONS} from "../src/Widgets/CardsPageLayout/Constants.js";
-import {EXPERIMENTS} from "./Constants.js";
+import {EXPERIMENT_OPERATIONS, EXPERIMENTS} from "./Constants.js";
 
 /** Url for locally run project */
 const LOCALE_URL = "http://localhost:5173";
@@ -26,14 +25,15 @@ export const EXPERIMENTS_TO_TEST = [EXPERIMENTS.REACT, EXPERIMENTS.WEB_COMPONENT
 
 /** Array with operations which will be tested */
 export const OPERATIONS_TO_TEST = [
-	OPERATIONS.insert,
-	OPERATIONS.insert1000,
-	OPERATIONS.delete,
-	OPERATIONS.deleteAll,
-	OPERATIONS.select,
-	OPERATIONS.swap,
-	OPERATIONS.replaceAll,
-	OPERATIONS.partialUpdate,
+	EXPERIMENT_OPERATIONS.create,
+	EXPERIMENT_OPERATIONS.createMany,
+	EXPERIMENT_OPERATIONS.appendToLargeAmount,
+	EXPERIMENT_OPERATIONS.replaceAll,
+	EXPERIMENT_OPERATIONS.partialUpdate,
+	EXPERIMENT_OPERATIONS.selectRow,
+	EXPERIMENT_OPERATIONS.swap,
+	EXPERIMENT_OPERATIONS.remove,
+	EXPERIMENT_OPERATIONS.clear,
 ];
 
 /**

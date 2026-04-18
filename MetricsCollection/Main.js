@@ -13,8 +13,8 @@ import {saveReport} from "./Utils/SaveReport.js";
 /**
  * Run pack operations for experiment and write results to report object
  * @param browser {Browser} puppeteer browser instance
- * @param experiment {string} experiment name @see {EXPERIMENTS}
- * @param operations {string[]} operations for which tests should run @see {OPERATIONS}
+ * @param experiment {string} experiment name {@link EXPERIMENTS}
+ * @param operations {string[]} operations for which tests should run {@link EXPERIMENT_OPERATIONS}
  * @param report {ExperimentReport} report instance, that will be supplemented with new data
  * @return {Promise<void>}
  */
