@@ -1,5 +1,6 @@
 import {useEffect} from "react";
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
+import GhPagesRedirector from "../Features/GitHubPages/GhPagesRedirector.js";
 import ExperimentReactPage from "../Pages/ExperimentReact/ExperimentReactPage.jsx";
 import ExperimentWCPage from "../Pages/ExperimentWC/ExperimentWCPage.jsx";
 import MainPage from "../Pages/MainPage/MainPage.jsx";
@@ -11,6 +12,7 @@ const App = () => {
 
 	return (
 		<BrowserRouter basename={ROUTER_BASENAME}>
+			<GhPagesRedirector/>
 			<Routes>
 				<Route path={RouterPath.Main} element={<MainPage/>}/>
 				<Route path={RouterPath.React} element={<ExperimentReactPage/>}/>

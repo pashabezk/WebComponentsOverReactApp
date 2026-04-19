@@ -5,8 +5,9 @@ on:
     push:
         branches: [ "main" ]
         paths: # action will run only if changes paths below
-            - "src/**"
             - ".github/workflows/**"
+            - "src/**"
+            - "public/**"
     workflow_dispatch: # to allow run action via github interface
 
 permissions:

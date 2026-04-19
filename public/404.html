@@ -6,14 +6,12 @@
 	<title>404 • WebComponents over React App</title>
 </head>
 <body>
-	This page is hack for GitHub Pages.
-	You will automatically redirect to an app.
-
+	This page is hack for GitHub Pages. You will automatically redirect to an app.<br/>
 	If this does not happen automatically,
 	<a href="https://pashabezk.github.io/WebComponentsOverReactApp/">click here</a>
 	<script>
-		sessionStorage.redirect = location.href;
-		location.replace(location.origin + '/WebComponentsOverReactApp');
+		sessionStorage.setItem('ghPagesRedirect', location.href);
+		location.replace(location.origin + '/WebComponentsOverReactApp/');
 	</script>
 </body>
 </html>
