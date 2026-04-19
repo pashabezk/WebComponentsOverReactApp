@@ -1,8 +1,8 @@
-import {RouterPath} from "../src/Shared/Constants/RouterConstants.js";
+import {ROUTER_BASENAME, RouterPath} from "../src/Shared/Constants/RouterConstants.js";
 import {EXPERIMENT_OPERATIONS, EXPERIMENTS} from "./Constants.js";
 
 /** Url for locally run project */
-const LOCALE_URL = "http://localhost:5173";
+const LOCALE_URL = "http://localhost:5173" + ROUTER_BASENAME;
 
 /** Url that uses in fact */
 const USED_URL = LOCALE_URL;
