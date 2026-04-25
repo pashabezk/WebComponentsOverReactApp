@@ -1,30 +1,10 @@
 import {readFile, writeFile} from "fs/promises";
 import path from "path";
 import {Logger} from "../MetricsCollection/Utils/Logger.js";
+import {transpose} from "../MetricsCollection/Utils/MatrixUtils.js";
 import {createReportsDirectory, generateReportFilename} from "../MetricsCollection/Utils/SaveReport.js";
 import {REPORTS_DIR} from "./Constants.js";
 import {parseTable} from "./ParseMetrics.js";
-
-/**
- * Function to remove first item from every matrix row
- * @param matrix {unknown[][]}
- * @return {unknown[][]}
- *
- * @example
- * const matrix = [
- *   [1, 2, 3],
- *   [3, 4, 5],
- *   [6, 7, 8],
- * ];
- *
- * const newMatrix = removeFirstItemFromEveryMatrixRow(matrix);
- * // [
- * //   [2, 3],
- * //   [4, 5],
- * //   [7, 8],
- * // ]
- */
-const removeFirstItemFromEveryMatrixRow = (matrix) => matrix.map(([, ...tail]) => tail);
 
 /**
  * Function run script for parse metrics from GH
@@ -75,10 +55,11 @@ const runPcaExperiment = async ({
 	const parsedData = parseMetrics
 		? await runParseMetricsStep(metricsFilepath)
 		: await runAlternateParseMetricsStep(metricsFilepath);
+	parsedData.shift(); // remove benchmark names
 
 	//#endregion
 
-	const dataForStep2 = removeFirstItemFromEveryMatrixRow(parsedData);
+	const dataForStep2 = transpose(parsedData);
 	console.log(dataForStep2);
 };
 

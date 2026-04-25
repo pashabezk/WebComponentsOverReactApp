@@ -4,13 +4,6 @@ import {Logger} from "../MetricsCollection/Utils/Logger.js";
 /** URL where benchmark results stored */
 const URL = "https://krausest.github.io/js-framework-benchmark/2026/chrome144.html";
 
-/**
- * Function to transpose matrix
- * @param matrix {unknown[][]}
- * @return {unknown[][]}
- */
-const transpose = matrix => matrix[0].map((_, i) => matrix.map(row => row[i]));
-
 const selectors = {
 	table: "table.results__table",
 	headerRow: "tr:has(th.benchname)",
@@ -65,5 +58,5 @@ export const parseTable = async () => {
 		}
 	}
 
-	return transpose(parsedData);
+	return parsedData;
 };
