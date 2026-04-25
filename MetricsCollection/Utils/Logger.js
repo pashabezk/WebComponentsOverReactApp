@@ -5,6 +5,9 @@ const ERROR = "\nERROR:";
 export class Logger {
 	static log = {
 		operationComplete: (experiment, operation, durationInMs) => console.log(LOG, `${experiment}: operation "${operation}" finished in ${durationInMs}ms`),
+		startStep: (stepName) => console.log(`Step "${stepName}" started`),
+		stepSkipped: (stepName) => console.log(`Step "${stepName}" was skipped`),
+		customMessage: (...messages) => console.log(...messages),
 	};
 
 	static success = {
@@ -16,5 +19,6 @@ export class Logger {
 		operationFailed: (operation) => console.error(ERROR, `Operation "${operation}" failed`),
 		createDir: (dirPath) => console.error(ERROR, `Could not create directory: "${dirPath}"`),
 		fileWrite: (filePath) => console.error(ERROR, `Could not save file: "${filePath}"`),
+		customMessage: (...messages) => console.error(ERROR, ...messages),
 	};
 }
