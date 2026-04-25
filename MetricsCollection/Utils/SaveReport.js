@@ -5,8 +5,19 @@ import {REPORTS_DIR} from "../Constants.js";
 import {toSortOrderedDatetime} from "./DateUtils.js";
 import {Logger} from "./Logger.js";
 
-const generateReportFilename = () => {
-	return "Report_from_" + toSortOrderedDatetime() + ".json";
+export const generateReportFilename = (prefix = "Report_from_") => {
+	return prefix + toSortOrderedDatetime() + ".json";
+};
+
+export const createReportsDirectory = (dir) => {
+	try {
+		if (!fs.existsSync(dir)) {
+			fs.mkdirSync(dir);
+		}
+	} catch (error) {
+		Logger.error.createDir(dir);
+		throw error;
+	}
 };
 
 /**
@@ -16,14 +27,7 @@ const generateReportFilename = () => {
  * @return {Promise<void>}
  */
 export const saveReport = async (objectToSave, filename) => {
-	try {
-		if (!fs.existsSync(REPORTS_DIR)) {
-			fs.mkdirSync(REPORTS_DIR);
-		}
-	} catch (error) {
-		Logger.error.createDir(REPORTS_DIR);
-		throw error;
-	}
+	createReportsDirectory(REPORTS_DIR);
 
 	const reportFilePath = path.join(REPORTS_DIR, filename ?? generateReportFilename());
 	const reportStr = JSON.stringify(objectToSave, null, "\t");

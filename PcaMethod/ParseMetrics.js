@@ -4,7 +4,11 @@ import {Logger} from "../MetricsCollection/Utils/Logger.js";
 /** URL where benchmark results stored */
 const URL = "https://krausest.github.io/js-framework-benchmark/2026/chrome144.html";
 
-/** Function to transpose matrix */
+/**
+ * Function to transpose matrix
+ * @param matrix {unknown[][]}
+ * @return {unknown[][]}
+ */
 const transpose = matrix => matrix[0].map((_, i) => matrix.map(row => row[i]));
 
 const selectors = {
@@ -15,11 +19,11 @@ const selectors = {
 
 /**
  * Function that parse metrics data from krausest repository ({@link URL})
- * @return parsed data or empty object in error case
+ * @return {Promise<string[][]>} parsed data or empty object in error case
  */
 export const parseTable = async () => {
 	let browser;
-	let parsedData = {};
+	let parsedData = [];
 
 	try {
 		browser = await puppeteer.launch({headless: true});
