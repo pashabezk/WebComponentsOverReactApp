@@ -1,10 +1,11 @@
 import {readFile, writeFile} from "fs/promises";
 import path from "path";
 import {Logger} from "../MetricsCollection/Utils/Logger.js";
-import {transpose} from "../MetricsCollection/Utils/MatrixUtils.js";
+import {strMatrixToNumeric, transpose} from "../MetricsCollection/Utils/MatrixUtils.js";
 import {createReportsDirectory, generateReportFilename} from "../MetricsCollection/Utils/SaveReport.js";
 import {REPORTS_DIR} from "./Constants.js";
 import {parseTable} from "./ParseMetrics.js";
+import {getPcaFormulas} from "./PcaCalculation.js";
 
 /**
  * Function run script for parse metrics from GH
@@ -42,16 +43,24 @@ const runAlternateParseMetricsStep = async (metricsFilepath) => {
 	}
 };
 
+/**
+ * Function run all scripts for PCA part of experiment
+ * @param options
+ * @param options.parseMetrics {boolean} flag to decide need to run script for parsing GH metrics
+ * @param options.parsedMetricsFileName {string} name of file where will be saved parsed metrics if parseMetrics=true,
+ *   or if parseMetrics=false - from this file metrics will be read
+ * @return {Promise<void>}
+ */
 const runPcaExperiment = async ({
 	parseMetrics = true,
-	metricsOutputFile = generateReportFilename('Parse_metrics_result_'),
+	parsedMetricsFileName = generateReportFilename('Parse_metrics_result_'),
 } = {}) => {
 	createReportsDirectory(REPORTS_DIR);
 
 	//#region step 1
 	// This step runs scripts to get metrics from GH benchmark results page
 
-	const metricsFilepath = path.join(REPORTS_DIR, metricsOutputFile);
+	const metricsFilepath = path.join(REPORTS_DIR, parsedMetricsFileName);
 	const parsedData = parseMetrics
 		? await runParseMetricsStep(metricsFilepath)
 		: await runAlternateParseMetricsStep(metricsFilepath);
@@ -59,11 +68,16 @@ const runPcaExperiment = async ({
 
 	//#endregion
 
-	const dataForStep2 = transpose(parsedData);
-	console.log(dataForStep2);
+	//#region step 2
+	const [metricNames, ...values] = transpose(parsedData);
+
+	const formulas = getPcaFormulas(metricNames, strMatrixToNumeric(values), 3);
+	console.log(formulas);
+
+	//#endregion
 };
 
 await runPcaExperiment({
 	parseMetrics: false,
-	metricsOutputFile: "Parse_metrics_result_2026_04_25.json",
+	parsedMetricsFileName: "Parse_metrics_result_2026_04_25.json",
 });

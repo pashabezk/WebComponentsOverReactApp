@@ -1,5 +1,6 @@
 const LOG = "LOG:";
 const ERROR = "\nERROR:";
+const WARNING = "\nWARNING:";
 
 /** Class helper that stores all messages to log */
 export class Logger {
@@ -15,6 +16,10 @@ export class Logger {
 		operationComplete: (operation) => console.log(`Operation "${operation}" finished successfully`),
 		reportSaved: (reportPath) => console.log(`Report saved to: "${reportPath}"`),
 		dataRead: () => console.log("Data was successfully read"),
+	};
+
+	static warning = {
+		explainedVarianceCriteriaFailed: (calculatedVariance, min, max) => console.warn(WARNING, `Explained variance criteria is failed. Your metrics explain ${calculatedVariance}% of variance, but it should be in range ${min}-${max}%. Recommendation is to change amount of PCA metrics`),
 	};
 
 	static error = {
