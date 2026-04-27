@@ -1,4 +1,4 @@
-import {readFile, writeFile} from "fs/promises";
+import {readFile} from "fs/promises";
 import path from "path";
 import {REPORTS_DIR} from "../MetricsCollection/Constants.js";
 import {toFullDateTime} from "../MetricsCollection/Utils/DateUtils.js";
@@ -12,14 +12,13 @@ import {getPcaFormulas} from "./PcaCalculation.js";
 
 /**
  * Function run script for parse metrics from GH
- * @param metricsFilepath {string} output path for metrics file
+ * @param metricsFilename {string}
  * @return {Promise<string[][]>} matrix with parsed data
  */
-const runParseMetricsStep = async (metricsFilepath) => {
+const runParseMetricsStep = async (metricsFilename) => {
 	Logger.log.startStep("Parse metrics");
 	const parsedData = await parseTable();
-	await writeFile(metricsFilepath, JSON.stringify(parsedData, null, "\t"));
-	Logger.success.reportSaved(metricsFilepath);
+	await saveReport(parsedData, metricsFilename);
 
 	return parsedData;
 };
@@ -103,7 +102,7 @@ const runPcaExperiment = async ({
 
 	const metricsFilepath = path.join(REPORTS_DIR, parsedMetricsFileName);
 	const parsedData = parseMetrics
-		? await runParseMetricsStep(metricsFilepath)
+		? await runParseMetricsStep(parsedMetricsFileName)
 		: await runAlternateParseMetricsStep(metricsFilepath);
 	parsedData.shift(); // remove benchmark names
 
@@ -131,6 +130,6 @@ const runPcaExperiment = async ({
 
 await runPcaExperiment({
 	parseMetrics: false,
-	parsedMetricsFileName: "Parse_metrics_result_2026_04_25.json",
+	parsedMetricsFileName: "Parse_metrics_result_2026_04_27__04_05.json",
 	localCollectedReportFileName: "Metric_collection_result_2026_04_26__23_55.json",
 });
