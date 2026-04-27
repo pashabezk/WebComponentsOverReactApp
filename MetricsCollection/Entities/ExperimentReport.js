@@ -3,6 +3,16 @@ import {EXPERIMENTS} from "../Constants.js";
 import {toFullDateTime} from "../Utils/DateUtils.js";
 
 /**
+ * @typedef {Object} LighthouseResults
+ * @property {number} lcp largest contentful paint
+ * @property {number} cls cumulative layout shift
+ * @property {number} fcp first contentful paint
+ * @property {number} tbt total blocking time
+ * @property {number} si speed index
+ * @property {number} performanceScore performance score
+ */
+
+/**
  * Helper to store experiments result and create report
  *
  * @example
@@ -29,6 +39,11 @@ export class ExperimentReport {
 	#webComponentsResults = {};
 	#reactResults = {};
 
+	/** @type {LighthouseResults[]} */
+	#webComponentsLhResults = [];
+	/** @type {LighthouseResults[]} */
+	#reactLhResults = [];
+
 	constructor() {
 		this.start();
 	}
@@ -45,8 +60,8 @@ export class ExperimentReport {
 
 	/**
 	 * Method to add experiment operation result
-	 * @param experiment {string} experiment name @see {EXPERIMENTS}
-	 * @param operation {string} operation name @see {OPERATIONS}
+	 * @param experiment {string} experiment name {@link EXPERIMENTS}
+	 * @param operation {string} operation name {@link OPERATIONS}
 	 * @param duration {number} operation duration in ms
 	 */
 	addResult(experiment, operation, duration) {
@@ -65,6 +80,19 @@ export class ExperimentReport {
 		}
 	}
 
+	/**
+	 * Method to add lighthouse run result
+	 * @param experiment {string} experiment name {@link EXPERIMENTS}
+	 * @param results {LighthouseResults} lighthouse results
+	 */
+	addLighthouseResult(experiment, results) {
+		if (experiment === EXPERIMENTS.REACT) {
+			this.#reactLhResults.push(results);
+		} else if (experiment === EXPERIMENTS.WEB_COMPONENTS) {
+			this.#webComponentsLhResults.push(results);
+		}
+	}
+
 	/** Creates report result object */
 	create() {
 		return {
@@ -79,6 +107,10 @@ export class ExperimentReport {
 				react: this.#reactResults,
 				webComponents: this.#webComponentsResults,
 			},
+			lighthouseResults: {
+				react: this.#reactLhResults,
+				webComponents: this.#webComponentsLhResults,
+			}
 		};
 	}
 }

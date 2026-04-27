@@ -36,6 +36,12 @@ export const OPERATIONS_TO_TEST = [
 	EXPERIMENT_OPERATIONS.clear,
 ];
 
+/** Flag for deciding whether to launch the lighthouse or not */
+export const RUN_LIGHTHOUSE = true;
+
+/** How many times lighthouse should be run */
+export const LIGHTHOUSE_REPEAT_COUNT = TEST_REPEAT_COUNT;
+
 /**
  * Flag to run browser in headless mode.
  * If true browser will be hidden.

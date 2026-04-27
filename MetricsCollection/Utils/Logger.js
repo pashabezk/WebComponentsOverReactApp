@@ -6,6 +6,8 @@ const WARNING = "\nWARNING:";
 export class Logger {
 	static log = {
 		operationComplete: (experiment, operation, durationInMs) => console.log(LOG, `${experiment}: operation "${operation}" finished in ${durationInMs}ms`),
+		lighthouseStart: (experiment, runNumber, totalRuns) => console.log(LOG, `${experiment}: Lighthouse start. Run ${runNumber} of ${totalRuns}`),
+		lighthouseComplete: (experiment, runNumber, totalRuns) => console.log(LOG, `${experiment}: Lighthouse finished. Run ${runNumber} of ${totalRuns}`),
 		startStep: (stepName) => console.log(`Step "${stepName}" started`),
 		stepSkipped: (stepName) => console.log(`Step "${stepName}" was skipped`),
 		tryToReadFile: (fileName) => console.log(`Try to load data from file: "${fileName}"`),

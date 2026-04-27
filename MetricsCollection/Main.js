@@ -1,7 +1,8 @@
 import puppeteer from "puppeteer";
-import {BROWSER_HEADLESS, EXPERIMENTS_TO_TEST, OPERATIONS_TO_TEST, TEST_REPEAT_COUNT} from "./Config.js";
+import {BROWSER_HEADLESS, EXPERIMENTS_TO_TEST, OPERATIONS_TO_TEST, RUN_LIGHTHOUSE, TEST_REPEAT_COUNT} from "./Config.js";
 import {ExperimentReport} from "./Entities/ExperimentReport.js";
 import {executeTest} from "./TestLogic/ExecuteTest.js";
+import {runLighthouse} from "./TestLogic/LighthouseTest.js";
 import {Logger} from "./Utils/Logger.js";
 import {generateReportFilename, saveReport} from "./Utils/SaveReport.js";
 
@@ -43,6 +44,11 @@ const runAllTests = async () => {
 	}
 
 	report.finish();
+
+	if (RUN_LIGHTHOUSE) {
+		await runLighthouse(browser, report);
+	}
+
 	await saveReport(report.create(), generateReportFilename("Metric_collection_result_"));
 };
 
