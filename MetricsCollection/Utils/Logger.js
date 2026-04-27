@@ -27,6 +27,7 @@ export class Logger {
 		createDir: (dirPath) => console.error(ERROR, `Could not create directory: "${dirPath}"`),
 		fileWrite: (filePath) => console.error(ERROR, `Could not save file: "${filePath}"`),
 		fileRead: (filePath) => console.error(ERROR, `Could not read file: "${filePath}"`),
+		getMetric: (metricName) => console.error(ERROR, `Could not find metric "${metricName}" in passed object`),
 		customMessage: (...messages) => console.error(ERROR, ...messages),
 	};
 }

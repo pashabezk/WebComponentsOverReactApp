@@ -3,7 +3,7 @@ import {BROWSER_HEADLESS, EXPERIMENTS_TO_TEST, OPERATIONS_TO_TEST, TEST_REPEAT_C
 import {ExperimentReport} from "./Entities/ExperimentReport.js";
 import {executeTest} from "./TestLogic/ExecuteTest.js";
 import {Logger} from "./Utils/Logger.js";
-import {saveReport} from "./Utils/SaveReport.js";
+import {generateReportFilename, saveReport} from "./Utils/SaveReport.js";
 
 /**
  * @typedef Browser
@@ -43,7 +43,7 @@ const runAllTests = async () => {
 	}
 
 	report.finish();
-	await saveReport(report.create());
+	await saveReport(report.create(), generateReportFilename("Metric_collection_result_"));
 };
 
 runAllTests().then(() => {

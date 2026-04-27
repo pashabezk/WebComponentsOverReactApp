@@ -4,6 +4,15 @@ import {Logger} from "../MetricsCollection/Utils/Logger.js";
 // PCA - principal component analysis
 
 /**
+ * @typedef {Object} PrincipalComponent
+ * @property {string} componentName
+ * @property {string} explainedVariance
+ * @property {[string, number][]} coefficients initial metric name with coefficient in PC
+ * @property {number} constant free term in the formula
+ * @property {string} formula stringified formula
+ */
+
+/**
  * Convert proportion to percentage
  * @param n {number}
  * @return {string}
@@ -12,7 +21,7 @@ import {Logger} from "../MetricsCollection/Utils/Logger.js";
 const toPercent = (n) => (n * 100).toFixed(2);
 
 /**
- * Function checks that the Explained Variance Criterion is satisfied for the specified number of metrics
+ * Function checks that the Explained Variance Criterion is satisfied for the specified number of principal components
  * @param explainedVariance {number[]} array with explained variance for pca metrics
  * @param metricsCount {number} amount of metrics to check
  * @param min {number} min of explained variance to pass criteria
@@ -28,9 +37,9 @@ const checkExplainedVariance = (explainedVariance, metricsCount, min, max) => {
 };
 
 /**
- * Stringify PCA metric formula
- * @param coefficients {[string, number][]}
- * @param constant {number}
+ * Stringify principal component formula
+ * @param coefficients {PrincipalComponent['coefficients']}
+ * @param constant {PrincipalComponent['constant']}
  * @return {string}
  */
 const formulaToStr = (coefficients, constant) => {
@@ -40,11 +49,11 @@ const formulaToStr = (coefficients, constant) => {
 };
 
 /**
- * Function calculates formulas for new PCA metrics
- * @param metricNames {string[]} array of metrics names
+ * Function calculates formulas for new principal components
+ * @param metricNames {string[]} array of initial metrics names
  * @param values {number[][]} values matrix
  * @param n {number?} amount of metrics to create
- * @return {{component: string, explainedVariance: string, formula: string}[]}
+ * @return {PrincipalComponent[]}
  *
  * @example
  * const metricNames = ['Metric1', 'Metric2', ..., 'Metric9'];
@@ -78,7 +87,7 @@ export const getPcaFormulas = (metricNames, values, n = metricNames.length) => {
 		});
 
 		return {
-			component: "PC" + (i + 1),
+			componentName: "PC" + (i + 1),
 			explainedVariance: toPercent(explainedVariance[i]) + "%",
 			coefficients,
 			constant,

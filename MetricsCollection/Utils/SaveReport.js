@@ -26,10 +26,10 @@ export const createReportsDirectory = (dir) => {
  * @param filename {string?} output filename
  * @return {Promise<void>}
  */
-export const saveReport = async (objectToSave, filename) => {
+export const saveReport = async (objectToSave, filename = generateReportFilename()) => {
 	createReportsDirectory(REPORTS_DIR);
 
-	const reportFilePath = path.join(REPORTS_DIR, filename ?? generateReportFilename());
+	const reportFilePath = path.join(REPORTS_DIR, filename);
 	const reportStr = JSON.stringify(objectToSave, null, "\t");
 	try {
 		await writeFile(reportFilePath, reportStr);

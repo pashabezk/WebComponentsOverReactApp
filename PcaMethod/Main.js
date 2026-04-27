@@ -1,9 +1,12 @@
 import {readFile, writeFile} from "fs/promises";
 import path from "path";
+import {REPORTS_DIR} from "../MetricsCollection/Constants.js";
+import {toFullDateTime} from "../MetricsCollection/Utils/DateUtils.js";
 import {Logger} from "../MetricsCollection/Utils/Logger.js";
 import {strMatrixToNumeric, transpose} from "../MetricsCollection/Utils/MatrixUtils.js";
-import {createReportsDirectory, generateReportFilename} from "../MetricsCollection/Utils/SaveReport.js";
-import {REPORTS_DIR} from "./Constants.js";
+import {createReportsDirectory, generateReportFilename, saveReport} from "../MetricsCollection/Utils/SaveReport.js";
+import {applyPcFormulas, calculateAvg} from "./ApplyPcaFormulas.js";
+import {OPERATION_NAME_MAPPER} from "./Constants.js";
 import {parseTable} from "./ParseMetrics.js";
 import {getPcaFormulas} from "./PcaCalculation.js";
 
@@ -44,16 +47,54 @@ const runAlternateParseMetricsStep = async (metricsFilepath) => {
 };
 
 /**
+ * Function run script for applying received PC formulas to metrics
+ * @param formulas {PrincipalComponent[]}
+ * @param metricsFilepath {string} file where user collected metrics stored
+ * @return {Promise<void>}
+ */
+const applyPcaFormulasStep = async (formulas, metricsFilepath) => {
+	let metricsData;
+
+	Logger.log.startStep("Apply formulas");
+	Logger.log.tryToReadFile(metricsFilepath);
+	try {
+		const localMetricsReadData = await readFile(metricsFilepath, "utf8");
+		metricsData = JSON.parse(localMetricsReadData);
+		Logger.success.dataRead();
+	} catch (error) {
+		Logger.error.fileRead(metricsFilepath);
+		throw error;
+	}
+
+	const reactAvgResults = calculateAvg(metricsData.results.react);
+	const wcAvgResults = calculateAvg(metricsData.results.webComponents);
+
+	const reactPcResults = applyPcFormulas(formulas, reactAvgResults);
+	const wcPcResults = applyPcFormulas(formulas, wcAvgResults);
+
+	const objToSave = {
+		info: {reportCreatedAt: toFullDateTime()},
+		results: {
+			react: reactPcResults,
+			webComponents: wcPcResults,
+		}
+	};
+	await saveReport(objToSave, generateReportFilename("Calculated_PC_from_"));
+};
+
+/**
  * Function run all scripts for PCA part of experiment
  * @param options
  * @param options.parseMetrics {boolean} flag to decide need to run script for parsing GH metrics
  * @param options.parsedMetricsFileName {string} name of file where will be saved parsed metrics if parseMetrics=true,
  *   or if parseMetrics=false - from this file metrics will be read
+ * @param options.localCollectedReportFileName {string} name of file where should be saved user collected metrics
  * @return {Promise<void>}
  */
 const runPcaExperiment = async ({
 	parseMetrics = true,
 	parsedMetricsFileName = generateReportFilename('Parse_metrics_result_'),
+	localCollectedReportFileName,
 } = {}) => {
 	createReportsDirectory(REPORTS_DIR);
 
@@ -69,15 +110,27 @@ const runPcaExperiment = async ({
 	//#endregion
 
 	//#region step 2
-	const [metricNames, ...values] = transpose(parsedData);
+	// Calculate formulas for new principal components using PCA method
 
-	const formulas = getPcaFormulas(metricNames, strMatrixToNumeric(values), 3);
-	console.log(formulas);
+	Logger.log.startStep("Calculating formulas using PCA method");
+	const [metricNames, ...values] = transpose(parsedData);
+	const formulas = getPcaFormulas(metricNames.map(name => OPERATION_NAME_MAPPER[name]), strMatrixToNumeric(values), 3);
 
 	//#endregion
+
+	//#region step 3
+	// Use formulas to calculate PC with data collected in local experiment
+
+	const localMetricsFilepath = path.join(REPORTS_DIR, localCollectedReportFileName);
+	await applyPcaFormulasStep(formulas, localMetricsFilepath);
+
+	//#endregion
+
+	Logger.success.operationComplete("PCA experiment");
 };
 
 await runPcaExperiment({
 	parseMetrics: false,
 	parsedMetricsFileName: "Parse_metrics_result_2026_04_25.json",
+	localCollectedReportFileName: "Metric_collection_result_2026_04_26__23_55.json",
 });

@@ -4,7 +4,7 @@ import {BUTTON_ID, DATA_TEST_ID, OPERATIONS} from "../src/Widgets/CardsPageLayou
 import {selectorById, selectorByTestId} from "./Utils/SelectorUtils.js";
 
 /** Directory where stored experiment reports */
-export const REPORTS_DIR = path.join("MetricsCollection", "Reports");
+export const REPORTS_DIR = path.join("Reports");
 
 /** Collection of experiments */
 export const EXPERIMENTS = {
