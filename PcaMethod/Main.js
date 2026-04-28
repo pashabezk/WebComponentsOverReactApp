@@ -6,7 +6,7 @@ import {Logger} from "../MetricsCollection/Utils/Logger.js";
 import {strMatrixToNumeric, transpose} from "../MetricsCollection/Utils/MatrixUtils.js";
 import {createReportsDirectory, generateReportFilename, saveReport} from "../MetricsCollection/Utils/SaveReport.js";
 import {applyPcFormulas, calculateAvg} from "./ApplyPcaFormulas.js";
-import {EXECUTE_PARSE_METRIC_STEP, METRICS_COLLECTION_FILENAME, PARSED_METRICS_FILENAME} from "./Config.js";
+import {EXECUTE_PARSE_METRIC_STEP, METRICS_COLLECTION_FILENAME, PARSED_METRICS_FILENAME, PRINCIPAL_COMPONENTS_AMOUNT, REFERENCE_FRAMEWORK_NAME} from "./Config.js";
 import {OPERATION_NAME_MAPPER} from "./Constants.js";
 import {parseTable} from "./ParseMetrics.js";
 import {getPcaFormulas} from "./PcaCalculation.js";
@@ -47,6 +47,56 @@ const runAlternateParseMetricsStep = async (metricsFilepath) => {
 };
 
 /**
+ * Function to convert measurements to relative units relative to the reference framework ({@link REFERENCE_FRAMEWORK_NAME})
+ * @param parsedData {string[][]}
+ * @return {{metricNames: string[], referenceMeasurements: number[], measurements: number[][]}}
+ */
+const normalizeParsedMeasurements = (parsedData) => {
+	const parsedDataCopy = structuredClone(parsedData); // to prevent mutation of original object
+
+	const referenceMeasurements = transpose(parsedDataCopy).find(row => row[0].includes(REFERENCE_FRAMEWORK_NAME));
+	if (!referenceMeasurements) {
+		Logger.error.notFoundReferenceFramework(REFERENCE_FRAMEWORK_NAME);
+		throw new Error(`Cannot find reference framework "${REFERENCE_FRAMEWORK_NAME}" in parsed data, please specify it in config`);
+	}
+	referenceMeasurements.shift(); // remove framework name
+	const referenceMeasurementsNumeric = referenceMeasurements.map(n => parseFloat(n));
+
+	parsedDataCopy.shift(); // remove benchmark names
+	const [metricNames, ...absoluteMeasurements] = transpose(parsedDataCopy);
+	const relativeMeasurements = strMatrixToNumeric(absoluteMeasurements)
+		.map(row => row.map((v, i) => v / referenceMeasurementsNumeric[i]));
+
+	return {
+		metricNames: metricNames.map(name => OPERATION_NAME_MAPPER[name]),
+		referenceMeasurements: referenceMeasurementsNumeric,
+		measurements: relativeMeasurements,
+	};
+};
+
+/**
+ * Function to convert measurements to relative units relative to the reference framework (React)
+ * @param reactMeasurements {Record<string, number>}
+ * @param wcMeasurements {Record<string, number>}
+ * @return {{react: Record<string, number>, wc: Record<string, number>}} relative measurements
+ */
+const normalizeLocalMeasurements = (reactMeasurements, wcMeasurements) => {
+	const relativeMeasurements = reactMeasurements;
+
+	const convertToRelative = (absoluteMeasurements) => {
+		return Object.entries(absoluteMeasurements).reduce((result, [metricName, value]) => {
+			result[metricName] = value / relativeMeasurements[metricName];
+			return result;
+		}, {});
+	};
+
+	return {
+		react: convertToRelative(reactMeasurements),
+		wc: convertToRelative(wcMeasurements),
+	};
+};
+
+/**
  * Function run script for applying received PC formulas to metrics
  * @param formulas {PrincipalComponent[]}
  * @param metricsFilepath {string} file where user collected metrics stored
@@ -68,9 +118,10 @@ const applyPcaFormulasStep = async (formulas, metricsFilepath) => {
 
 	const reactAvgResults = calculateAvg(metricsData.results.react);
 	const wcAvgResults = calculateAvg(metricsData.results.webComponents);
+	const relativeMeasurements = normalizeLocalMeasurements(reactAvgResults, wcAvgResults);
 
-	const reactPcResults = applyPcFormulas(formulas, reactAvgResults);
-	const wcPcResults = applyPcFormulas(formulas, wcAvgResults);
+	const reactPcResults = applyPcFormulas(formulas, relativeMeasurements.react);
+	const wcPcResults = applyPcFormulas(formulas, relativeMeasurements.wc);
 
 	const objToSave = {
 		info: {reportCreatedAt: toFullDateTime()},
@@ -104,7 +155,6 @@ const runPcaExperiment = async ({
 	const parsedData = parseMetrics
 		? await runParseMetricsStep(parsedMetricsFileName)
 		: await runAlternateParseMetricsStep(metricsFilepath);
-	parsedData.shift(); // remove benchmark names
 
 	//#endregion
 
@@ -112,8 +162,10 @@ const runPcaExperiment = async ({
 	// Calculate formulas for new principal components using PCA method
 
 	Logger.log.startStep("Calculating formulas using PCA method");
-	const [metricNames, ...values] = transpose(parsedData);
-	const formulas = getPcaFormulas(metricNames.map(name => OPERATION_NAME_MAPPER[name]), strMatrixToNumeric(values), 3);
+	const {metricNames, measurements} = normalizeParsedMeasurements(parsedData);
+	const formulas = getPcaFormulas(metricNames, measurements, PRINCIPAL_COMPONENTS_AMOUNT);
+
+	await saveReport(formulas, generateReportFilename("PC_formulas_"));
 
 	//#endregion
 

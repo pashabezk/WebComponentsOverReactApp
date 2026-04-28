@@ -21,7 +21,7 @@ export const TEST_REPEAT_COUNT = 10;
 export const ELEMENTS_ON_PAGE = 10000;
 
 /** Array with experiments which will be tested */
-export const EXPERIMENTS_TO_TEST = [EXPERIMENTS.REACT, EXPERIMENTS.WEB_COMPONENTS];
+export const EXPERIMENTS_TO_TEST = [EXPERIMENTS.WEB_COMPONENTS, EXPERIMENTS.REACT];
 
 /** Array with operations which will be tested */
 export const OPERATIONS_TO_TEST = [

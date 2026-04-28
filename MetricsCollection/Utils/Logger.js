@@ -30,6 +30,7 @@ export class Logger {
 		fileWrite: (filePath) => console.error(ERROR, `Could not save file: "${filePath}"`),
 		fileRead: (filePath) => console.error(ERROR, `Could not read file: "${filePath}"`),
 		getMetric: (metricName) => console.error(ERROR, `Could not find metric "${metricName}" in passed object`),
+		notFoundReferenceFramework: (frameworkName) => console.error(ERROR, `Cannot find reference framework "${frameworkName}" in parsed data, please specify it in config`),
 		customMessage: (...messages) => console.error(ERROR, ...messages),
 	};
 }

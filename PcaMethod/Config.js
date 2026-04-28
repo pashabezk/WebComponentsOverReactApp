@@ -26,4 +26,17 @@ export const PARSED_METRICS_FILENAME = "Parse_metrics_result_2026_04_27__23_58.j
  *
  * To receive this file you should firstly execute node script: `collect-metrics`
  */
-export const METRICS_COLLECTION_FILENAME = "Metric_collection_result_2026_04_26__23_55.json";
+export const METRICS_COLLECTION_FILENAME = "Metric_collection_result_2026_04_29__00_56.json";
+
+/**
+ * Name of framework, which will be used as reference for relative measurements
+ *
+ * Note: referenced benchmark will be searched as a substring,
+ * so make sure, that result for this search are only one.
+ *
+ * Note: you could specify framework version for exactly search
+ */
+export const REFERENCE_FRAMEWORK_NAME = "react-hooks-v19";
+
+/** Amount of principal components that should be calculated */
+export const PRINCIPAL_COMPONENTS_AMOUNT = 3;

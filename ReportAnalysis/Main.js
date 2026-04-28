@@ -2,8 +2,8 @@ import fs from "fs";
 import path from "path";
 import {saveReport} from "../MetricsCollection/Utils/SaveReport.js";
 
-const REPORT_FILENAME = "Report_from_2026_04_11__01_21.json";
-const REPORTS_DIR = path.join("MetricsCollection", "Reports");
+const REPORT_FILENAME = "Metric_collection_result_2026_04_29__00_56.json";
+const REPORTS_DIR = path.join("Reports");
 
 const OUTPUT_FILENAME = REPORT_FILENAME.split(".json")[0] + "_statistics.json";
 
