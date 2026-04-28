@@ -1,8 +1,6 @@
 import puppeteer from "puppeteer";
 import {Logger} from "../MetricsCollection/Utils/Logger.js";
-
-/** URL where benchmark results stored */
-const URL = "https://krausest.github.io/js-framework-benchmark/2026/chrome144.html";
+import {URL_GH} from "./Constants.js";
 
 const selectors = {
 	table: "table.results__table",
@@ -23,7 +21,7 @@ export const parseTable = async () => {
 		const page = await browser.newPage();
 		await page.setViewport({width: 1280, height: 800});
 
-		await page.goto(URL, {waitUntil: "networkidle2", timeout: 60000});
+		await page.goto(URL_GH, {waitUntil: "networkidle2", timeout: 60000});
 
 		Logger.log.customMessage("Browser opened. Wait for table to start parsing...");
 		await page.waitForSelector(selectors.table, {timeout: 30000});

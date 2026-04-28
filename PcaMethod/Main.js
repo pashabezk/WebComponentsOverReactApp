@@ -84,8 +84,8 @@ const applyPcaFormulasStep = async (formulas, metricsFilepath) => {
 /**
  * Function run all scripts for PCA part of experiment
  * @param options
- * @param options.parseMetrics {boolean} flag to decide need to run script for parsing GH metrics
- * @param options.parsedMetricsFileName {string} name of file where will be saved parsed metrics if parseMetrics=true,
+ * @param options.parseMetrics {boolean?} flag to decide need to run script for parsing GH metrics
+ * @param options.parsedMetricsFileName {string?} name of file where will be saved parsed metrics if parseMetrics=true,
  *   or if parseMetrics=false - from this file metrics will be read
  * @param options.localCollectedReportFileName {string} name of file where should be saved user collected metrics
  * @return {Promise<void>}
@@ -130,6 +130,6 @@ const runPcaExperiment = async ({
 
 await runPcaExperiment({
 	parseMetrics: false,
-	parsedMetricsFileName: "Parse_metrics_result_2026_04_27__04_05.json",
+	parsedMetricsFileName: "Parse_metrics_result_2026_04_27__23_58.json",
 	localCollectedReportFileName: "Metric_collection_result_2026_04_26__23_55.json",
 });

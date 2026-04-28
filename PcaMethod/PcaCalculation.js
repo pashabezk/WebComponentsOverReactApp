@@ -9,6 +9,7 @@ import {Logger} from "../MetricsCollection/Utils/Logger.js";
  * @property {string} explainedVariance
  * @property {[string, number][]} coefficients initial metric name with coefficient in PC
  * @property {number} constant free term in the formula
+ * @property {{name: string, value: number}[]} loadings Pearson correlation coefficient between the original metric and the new principal component
  * @property {string} formula stringified formula
  */
 
@@ -45,7 +46,7 @@ const checkExplainedVariance = (explainedVariance, metricsCount, min, max) => {
 const formulaToStr = (coefficients, constant) => {
 	const sign = (n) => n >= 0 ? "+" : "";
 	const stringifiedCoefs = coefficients.map(([name, coef]) => `${sign(coef)}${coef.toFixed(6)} * ${name}`);
-	return stringifiedCoefs.join("\n") + "\n" + constant.toFixed(6);
+	return stringifiedCoefs.join("\n") + "\n" + sign(constant) + constant.toFixed(6);
 };
 
 /**
@@ -71,7 +72,8 @@ const formulaToStr = (coefficients, constant) => {
 export const getPcaFormulas = (metricNames, values, n = metricNames.length) => {
 	const pca = new PCA(values, {center: true, scale: true});
 	const {stdevs, means} = pca.toJSON();
-	const ev = pca.getEigenvectors();
+	const eigenVectors = pca.getEigenvectors();
+	const eigenValues = pca.getEigenvalues();
 	const explainedVariance = pca.getExplainedVariance();
 
 	const checkResult = checkExplainedVariance(explainedVariance, n, 0.8, 0.95);
@@ -80,10 +82,15 @@ export const getPcaFormulas = (metricNames, values, n = metricNames.length) => {
 	}
 
 	return Array.from({length: n}, (_, i) => {
-		const constant = -metricNames.reduce((sum, _, j) => sum + ev.get(j, i) * means[j] / stdevs[j], 0);
+		const constant = -metricNames.reduce((sum, _, j) => sum + eigenVectors.get(j, i) * means[j] / stdevs[j], 0);
 		const coefficients = metricNames.map((name, j) => {
-			const coef = ev.get(j, i) / stdevs[j];
+			const coef = eigenVectors.get(j, i) / stdevs[j];
 			return [name, coef];
+		});
+
+		const loadings = metricNames.map((name, j) => {
+			const loadingValue = eigenVectors.get(j, i) * Math.sqrt(eigenValues[i]);
+			return {name, value: parseFloat(loadingValue.toFixed(4))};
 		});
 
 		return {
@@ -91,6 +98,7 @@ export const getPcaFormulas = (metricNames, values, n = metricNames.length) => {
 			explainedVariance: toPercent(explainedVariance[i]) + "%",
 			coefficients,
 			constant,
+			loadings,
 			formula: formulaToStr(coefficients, constant),
 		};
 	});
