@@ -6,6 +6,7 @@ import {Logger} from "../MetricsCollection/Utils/Logger.js";
 import {strMatrixToNumeric, transpose} from "../MetricsCollection/Utils/MatrixUtils.js";
 import {createReportsDirectory, generateReportFilename, saveReport} from "../MetricsCollection/Utils/SaveReport.js";
 import {applyPcFormulas, calculateAvg} from "./ApplyPcaFormulas.js";
+import {EXECUTE_PARSE_METRIC_STEP, METRICS_COLLECTION_FILENAME, PARSED_METRICS_FILENAME} from "./Config.js";
 import {OPERATION_NAME_MAPPER} from "./Constants.js";
 import {parseTable} from "./ParseMetrics.js";
 import {getPcaFormulas} from "./PcaCalculation.js";
@@ -85,8 +86,7 @@ const applyPcaFormulasStep = async (formulas, metricsFilepath) => {
  * Function run all scripts for PCA part of experiment
  * @param options
  * @param options.parseMetrics {boolean?} flag to decide need to run script for parsing GH metrics
- * @param options.parsedMetricsFileName {string?} name of file where will be saved parsed metrics if parseMetrics=true,
- *   or if parseMetrics=false - from this file metrics will be read
+ * @param options.parsedMetricsFileName {string?} parsed metrics storage file: used for output if `parseMetrics=true`, and for input if `parseMetrics=false`
  * @param options.localCollectedReportFileName {string} name of file where should be saved user collected metrics
  * @return {Promise<void>}
  */
@@ -129,7 +129,7 @@ const runPcaExperiment = async ({
 };
 
 await runPcaExperiment({
-	parseMetrics: false,
-	parsedMetricsFileName: "Parse_metrics_result_2026_04_27__23_58.json",
-	localCollectedReportFileName: "Metric_collection_result_2026_04_26__23_55.json",
+	parseMetrics: EXECUTE_PARSE_METRIC_STEP,
+	parsedMetricsFileName: PARSED_METRICS_FILENAME,
+	localCollectedReportFileName: METRICS_COLLECTION_FILENAME,
 });

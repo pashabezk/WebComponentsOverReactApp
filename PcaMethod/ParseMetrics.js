@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer";
 import {Logger} from "../MetricsCollection/Utils/Logger.js";
-import {URL_GH} from "./Constants.js";
+import {PARSE_METRICS_URL} from "./Config.js";
 
 const selectors = {
 	table: "table.results__table",
@@ -9,7 +9,7 @@ const selectors = {
 };
 
 /**
- * Function that parse metrics data from krausest repository ({@link URL})
+ * Function that parse metrics data from krausest repository ({@link PARSE_METRICS_URL})
  * @return {Promise<string[][]>} parsed data or empty object in error case
  */
 export const parseTable = async () => {
@@ -21,7 +21,7 @@ export const parseTable = async () => {
 		const page = await browser.newPage();
 		await page.setViewport({width: 1280, height: 800});
 
-		await page.goto(URL_GH, {waitUntil: "networkidle2", timeout: 60000});
+		await page.goto(PARSE_METRICS_URL, {waitUntil: "networkidle2", timeout: 60000});
 
 		Logger.log.customMessage("Browser opened. Wait for table to start parsing...");
 		await page.waitForSelector(selectors.table, {timeout: 30000});

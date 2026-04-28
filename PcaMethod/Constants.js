@@ -1,9 +1,5 @@
 import {EXPERIMENT_OPERATIONS} from "../MetricsCollection/Constants.js";
 
-/** URL where benchmark results stored */
-export const URL_GH = "https://krausest.github.io/js-framework-benchmark/2026/chrome146_2.html";
-// https://krausest.github.io/js-framework-benchmark/current.html
-
 /**
  * Mapper for operations names.
  * Key is operation name from parsed data.
