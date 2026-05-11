@@ -1,23 +1,36 @@
 import fs from "fs";
 import path from "path";
+import {REPORTS_DIR} from "../MetricsCollection/Constants.js";
 import {saveReport} from "../MetricsCollection/Utils/SaveReport.js";
-
-const REPORT_FILENAME = "Metric_collection_result_2026_04_29__00_56.json";
-const REPORTS_DIR = path.join("Reports");
-
-const OUTPUT_FILENAME = REPORT_FILENAME.split(".json")[0] + "_statistics.json";
+import {OUTPUT_FILENAME, REPORT_FILENAME} from "./Config.js";
 
 const report = fs.readFileSync(path.join(REPORTS_DIR, REPORT_FILENAME), "utf8");
 
-const resultsFromReport = JSON.parse(report).results;
+const {results, lighthouseResults} = JSON.parse(report);
+
+/**
+ * Calculates array sum
+ * @param arr {number[]}
+ * @return {number}
+ */
+const calculateSum = (arr) => arr.reduce((sum, n) => sum + n, 0);
+
+/**
+ * Calculates array average
+ * @param arr {number[]}
+ * @return {number}
+ */
+const calculateAvg = (arr) => calculateSum(arr) / arr.length;
+
+//#region analyze interaction metrics
 
 const statistics = {};
 
-Object.entries(resultsFromReport).forEach(([experiment, operations]) => {
+Object.entries(results).forEach(([experiment, operations]) => {
 	const experimentStatistics = {};
 	Object.entries(operations).forEach(([operation, measurements]) => {
 		const amount = measurements.length;
-		const sum = measurements.reduce((sum, n) => sum + n, 0);
+		const sum = calculateSum(measurements);
 		const average = sum / amount;
 		const sortedMeasurements = measurements.toSorted();
 		const median = amount % 2 === 0
@@ -38,6 +51,25 @@ Object.entries(resultsFromReport).forEach(([experiment, operations]) => {
 	statistics[experiment] = experimentStatistics;
 });
 
-console.log(statistics);
+//#endregion
 
-await saveReport({info: {for: REPORT_FILENAME}, statistics}, OUTPUT_FILENAME);
+//#region analyze lighthouse metrics
+
+const lighthouseAggregation = {};
+
+Object.entries(lighthouseResults).forEach(([experiment, measurements]) => {
+	const initialValues = Object.fromEntries(Object.entries(measurements[0]).map(([key]) => [key, []]));
+	const groupedByMetric = measurements.reduce((grouped, values) => {
+		Object.entries(values).forEach(([metricName, metricValue]) => {
+			grouped[metricName].push(metricValue);
+		});
+		return grouped;
+	}, initialValues);
+	const resultEntries = Object.entries(groupedByMetric)
+		.map(([metricName, metricValues]) => ([metricName, calculateAvg(metricValues)]));
+	lighthouseAggregation[experiment] = Object.fromEntries(resultEntries);
+});
+
+//#endregion
+
+await saveReport({info: {for: REPORT_FILENAME}, statistics, lighthouseAggregation}, OUTPUT_FILENAME);
