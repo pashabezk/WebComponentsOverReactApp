@@ -2,11 +2,31 @@ import fs from "fs";
 import path from "path";
 import {REPORTS_DIR} from "../MetricsCollection/Constants.js";
 import {saveReport} from "../MetricsCollection/Utils/SaveReport.js";
-import {OUTPUT_FILENAME, REPORT_FILENAME} from "./Config.js";
+import {OUTPUT_FILENAME, PCA_FORMULAS_FILENAME, REPORT_FILENAME} from "./Config.js";
 
-const report = fs.readFileSync(path.join(REPORTS_DIR, REPORT_FILENAME), "utf8");
+/**
+ * Apply mapFn to all object values
+ * @param obj {object}
+ * @param mapFn {(value: unknown) => unknown}
+ * @return {Record<PropertyKey, unknown>}
+ */
+const mapValues = (obj, mapFn) => Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, mapFn(v)]));
 
-const {results, lighthouseResults} = JSON.parse(report);
+/**
+ * Round value
+ * @param value {number}
+ * @param fractionDigits {number?}
+ * @return {number}
+ */
+const round = (value, fractionDigits = 3) => parseFloat(value.toFixed(fractionDigits));
+
+/**
+ * Round all object values
+ * @param obj {Record<PropertyKey, number>}
+ * @param fractionDigits {number?}
+ * @return {Record<PropertyKey, number>}
+ */
+const roundValues = (obj, fractionDigits = 3) => mapValues(obj, (v) => round(v, fractionDigits));
 
 /**
  * Calculates array sum
@@ -21,6 +41,19 @@ const calculateSum = (arr) => arr.reduce((sum, n) => sum + n, 0);
  * @return {number}
  */
 const calculateAvg = (arr) => calculateSum(arr) / arr.length;
+
+/**
+ * Calculates web component value gain over react
+ * @param reactValue {number}
+ * @param wcValue {number}
+ * @return {number} gain in percent
+ */
+const calculateGain = (reactValue, wcValue) => ((reactValue - wcValue) / reactValue) * 100;
+
+const report = fs.readFileSync(path.join(REPORTS_DIR, REPORT_FILENAME), "utf8");
+const pcaFormulas = fs.readFileSync(path.join(REPORTS_DIR, PCA_FORMULAS_FILENAME), "utf8");
+
+const {results, lighthouseResults} = JSON.parse(report);
 
 //#region analyze interaction metrics
 
@@ -42,11 +75,7 @@ Object.entries(results).forEach(([experiment, operations]) => {
 		const standardDeviation = Math.sqrt(dispersion);
 
 		const metrics = {min, max, average, median, dispersion, standardDeviation};
-		Object.entries(metrics).forEach(([metric, value]) => {
-			metrics[metric] = parseFloat(value.toFixed(3));
-		});
-
-		experimentStatistics[operation] = metrics;
+		experimentStatistics[operation] = roundValues(metrics);
 	});
 	statistics[experiment] = experimentStatistics;
 });
@@ -58,18 +87,39 @@ Object.entries(results).forEach(([experiment, operations]) => {
 const lighthouseAggregation = {};
 
 Object.entries(lighthouseResults).forEach(([experiment, measurements]) => {
-	const initialValues = Object.fromEntries(Object.entries(measurements[0]).map(([key]) => [key, []]));
+	const initialValues = mapValues(measurements[0], () => []);
 	const groupedByMetric = measurements.reduce((grouped, values) => {
 		Object.entries(values).forEach(([metricName, metricValue]) => {
 			grouped[metricName].push(metricValue);
 		});
 		return grouped;
 	}, initialValues);
-	const resultEntries = Object.entries(groupedByMetric)
-		.map(([metricName, metricValues]) => ([metricName, calculateAvg(metricValues)]));
-	lighthouseAggregation[experiment] = Object.fromEntries(resultEntries);
+	lighthouseAggregation[experiment] = mapValues(groupedByMetric, calculateAvg);
 });
 
 //#endregion
 
-await saveReport({info: {for: REPORT_FILENAME}, statistics, lighthouseAggregation}, OUTPUT_FILENAME);
+//#region calculate gain
+
+const metricNames = Object.keys(statistics.react);
+const metricLoadings = Object.fromEntries(JSON.parse(pcaFormulas)[0].loadings.map(({name, value}) => [name, value]));
+const metricLoadingsSum = calculateSum(Object.values(metricLoadings));
+const weights = mapValues(metricLoadings, (value) => value / metricLoadingsSum);
+const gainByMetric = Object.fromEntries(metricNames.map(metricName => [metricName, calculateGain(statistics.react[metricName].average, statistics.webComponents[metricName].average)]));
+const totalGain = metricNames.reduce((sum, metricName) => sum + (gainByMetric[metricName] * weights[metricName]), 0);
+
+const lighthouseGain = -calculateGain(lighthouseAggregation.react.performanceScore, lighthouseAggregation.webComponents.performanceScore);
+
+//#endregion
+
+await saveReport({
+	info: {for: REPORT_FILENAME},
+	interactionMetricsAggregation: statistics,
+	interactionMetricsGain: {
+		gainByMetric: roundValues(gainByMetric),
+		weights: roundValues(weights),
+		totalGain: round(totalGain),
+	},
+	lighthouseAggregation: mapValues(lighthouseAggregation, roundValues),
+	lighthouseGain: round(lighthouseGain),
+}, OUTPUT_FILENAME);
